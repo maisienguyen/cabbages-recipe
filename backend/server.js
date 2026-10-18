@@ -3,7 +3,7 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const router = express.Router();
 const mongoose = require("mongoose");
-
+const cookieParser = require("cookie-parser");
 
 dotenv.config();
 
@@ -23,6 +23,7 @@ connectDB();
 
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
 app.use(
    cors({
        origin: process.env.ORIGIN,

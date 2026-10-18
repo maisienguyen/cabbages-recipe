@@ -94,8 +94,41 @@ const loginUser = async (req, res) => {
    }
 };
 
+const userProfile = async (req, res) => {
+   try {
+       const token =
+    req.headers.authorization?.split(" ")[1] ||
+    req.cookies?.jwt;
+
+if (!token) {
+    return res.status(401).json({ message: "No token provided" });
+}
+
+       const decoded = jwt.decode(token, process.env.JWT_SECRET);
+       if (!decoded) {
+           return res.status(401).json({ message: "Invalid token" });
+       }
+       const { id } = decoded;
+
+
+       const user = await User.findById(id);
+       if (!user) {
+           return res.status(404).json({ message: "User not found" });
+       }
+
+
+       res.status(200).json({
+           id: user._id,
+           username: user.username,
+       });
+   } catch (error) {
+       res.status(500).json({ message: error.message });
+   }
+};
+
+
 module.exports = {
    registerUser,
    loginUser,
-
+   userProfile,
 };
