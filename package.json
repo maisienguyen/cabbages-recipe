@@ -21,5 +21,8 @@
   "homepage": "https://github.com/maisienguyen/cabbages-recipe#readme",
   "devDependencies": {
     "concurrently": "^10.0.5"
+  },
+  "dependencies": {
+    "jsonwebtoken": "^9.0.3"
   }
 }
