@@ -4,6 +4,7 @@ const cors = require("cors");
 const router = express.Router();
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+const recipeRoutes = require('./routes/recipeRoutes')
 
 dotenv.config();
 
@@ -42,7 +43,7 @@ app.use("/api/users", (req, res, next) => {
     console.log("Request received:", req.method, req.originalUrl);
     next();
 }, require("./routes/userRoutes"));
-
+app.use('/api/recipes', recipeRoutes)
 
 app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`));
 
