@@ -1,8 +1,7 @@
-
 :root {
   font-family: Arial, Helvetica, sans-serif;
   color: #242424;
-  background: #ffffff;
+  background: #fdfcfb;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -19,3 +18,8 @@ body {
   min-height: 100vh;
   margin: 0;
 }
+
+* {
+  box-sizing: border-box;
+}
+```
