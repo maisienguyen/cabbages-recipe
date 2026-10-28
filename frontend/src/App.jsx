@@ -1,5 +1,6 @@
 import { Link, Routes, Route } from 'react-router-dom'
-import createRecipe from './pages/createRecipe.jsx'
+import CreateRecipe from './pages/createRecipe.jsx'
+import UserLogin from './pages/userLogin.jsx'
 import './App.css'
 
 
@@ -332,9 +333,15 @@ function App() {
 
       <Route
         path="/create-recipe"
-        element={<createRecipe />}
+        element={<CreateRecipe />}
       />
+
+      <Route
+    path="/login"
+    element={<UserLogin />}
+  />
     </Routes>
+
   )
 }
 
