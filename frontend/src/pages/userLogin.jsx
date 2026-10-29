@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
-function userLogin() {
+function UserLogin() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -30,7 +30,7 @@ function userLogin() {
         throw new Error(data.message || 'Login failed')
       }
 
-      navigate('/create-recipe')
+      navigate('/')
     } catch (error) {
       setError(error.message || 'Unable to connect to the server')
     } finally {

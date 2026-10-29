@@ -3,25 +3,35 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const registerUser = async (req, res) => {
-   const { username, password, confirmPassword } = req.body;
-
+const { username, email, password, confirmPassword } = req.body;
+const normalizedUsername = username.trim();
+const normalizedEmail = email.trim().toLowerCase();
 
    try {
        if (!username || !password || !confirmPassword) {
            return res.status(400).json({ message: "All fields are required" });
        }
 
-console.log("1. Register request received");
-       const userExists = await User.findOne({ username });
+       console.log("1. Register request received");
+       const userExists = await User.findOne({
+        $or: [
+            { username: normalizedUsername },
+            { email: normalizedEmail },
+        ],
+    });
        console.log("2. User check completed");
 
        if (userExists) {
-           return res.status(400).json({ message: "User already exists" });
+           return res.status(400).json({ message: "Username or email already exists" });
        }
        if (password !== confirmPassword) {
            return res.status(400).json({ message: "Passwords do not match" });
        }
-
+       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+        return res.status(400).json({
+            message: "Please enter a valid email address",
+        });
+    }
 
        const salt = await bcrypt.genSalt(10);
        console.log("3. Salt generated");
@@ -30,7 +40,8 @@ console.log("1. Register request received");
        console.log("4. Password hashed");
 
        const user = await User.create({
-           username,
+           username: normalizedUsername,
+           email: normalizedEmail,
            password: hashedPassword,
        });
        console.log("5. User created");
@@ -39,9 +50,20 @@ console.log("1. Register request received");
  res.status(201).json({
         id: user._id,
         username: user.username,
+        email: user.email,
        }); 
     } catch (error){
-        red.status(500).json({message: error.message});
+        console.error("Register error:", error);
+
+    if (error.code === 11000) {
+        return res.status(409).json({
+            message: "Username or email already exists",
+        });
+    }
+
+    return res.status(500).json({
+        message: "Internal server error",
+    });
     }
 };
 

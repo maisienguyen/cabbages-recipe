@@ -1,6 +1,7 @@
 import { Link, Routes, Route } from 'react-router-dom'
 import CreateRecipe from './pages/createRecipe.jsx'
 import UserLogin from './pages/userLogin.jsx'
+import UserRegister from './pages/userRegister.jsx'
 import './App.css'
 
 
@@ -204,20 +205,15 @@ function App() {
           <Link to="/user">My profile</Link>
         </nav>
 
-        <div className="nav-user">
-          <Link to="/create-recipe" className="publish-button">
-            + Publish recipe
-          </Link>
+<div className="nav-user">
+  <Link to="/login" className="login-button">
+    Log in
+  </Link>
 
-          <span className="avatar">MC</span>
-          <button
-            type="button"
-            className="username"
-            onClick={() => alert('Profile menu will be added later.')}
-          >
-            Mai Nguyen <span>⌄</span>
-          </button>
-        </div>
+  <Link to="/register" className="register-button">
+    Register
+  </Link>
+</div>
       </header>
 
       <main className="container">
@@ -331,15 +327,10 @@ function App() {
         }
       />
 
-      <Route
-        path="/create-recipe"
-        element={<CreateRecipe />}
-      />
+      <Route path="/create-recipe" element={<CreateRecipe />}/>
 
-      <Route
-    path="/login"
-    element={<UserLogin />}
-  />
+      <Route path="/login" element={<UserLogin />} />
+  <Route path="/register" element={<UserRegister />} />
     </Routes>
 
   )

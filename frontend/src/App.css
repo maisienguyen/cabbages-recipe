@@ -560,6 +560,121 @@ input:focus-visible {
     height: 170px;
   }
 }
+/* Login and Register pages */
+
+.login-page,
+.register-page {
+  width: 100%;
+  max-width: 440px;
+  margin: 80px auto;
+  padding: 40px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7d5;
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+
+.login-page h1,
+.register-page h1 {
+  margin-bottom: 12px;
+  color: #26351f;
+  font-size: 32px;
+}
+
+.login-page > p,
+.register-page > p {
+  margin-bottom: 28px;
+  color: #6b705c;
+  line-height: 1.6;
+}
+
+.login-page form,
+.register-page form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.login-page label,
+.register-page label {
+  margin-top: 8px;
+  color: #26351f;
+  font-weight: 600;
+}
+
+.login-page input,
+.register-page input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #d9dec9;
+  border-radius: 8px;
+  background-color: #ffffff;
+  font-size: 15px;
+  box-sizing: border-box;
+}
+
+.login-page input:focus,
+.register-page input:focus {
+  outline: 2px solid #a8c96b;
+  border-color: #a8c96b;
+}
+
+.login-page form button,
+.register-page form button {
+  margin-top: 16px;
+  padding: 13px;
+  border: none;
+  border-radius: 8px;
+  background-color: #b7d875;
+  color: #26351f;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.login-page form button:hover,
+.register-page form button:hover {
+  background-color: #a6c963;
+}
+
+.login-page form button:disabled,
+.register-page form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.login-page > a,
+.register-page > a {
+  display: inline-block;
+  margin-top: 20px;
+  color: #526b37;
+  text-decoration: none;
+}
+
+.login-page a:hover,
+.register-page a:hover {
+  text-decoration: underline;
+}
+
+.login-error,
+.register-error {
+  color: #c0392b;
+  font-size: 14px;
+}
+
+.register-success {
+  color: #47752d;
+  font-size: 14px;
+}
+
+@media (max-width: 480px) {
+  .login-page,
+  .register-page {
+    margin: 32px auto;
+    padding: 24px;
+    width: calc(100% - 32px);
+  }
+}
 
 /*MOBILE*/
 
