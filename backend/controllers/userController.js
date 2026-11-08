@@ -68,99 +68,100 @@ const normalizedEmail = email.trim().toLowerCase();
 };
 
 const loginUser = async (req, res) => {
-   const { username, password } = req.body;
+    const { username, password } = req.body;
 
+    try {
+        if (!username || !password) {
+            return res.status(400).json({
+                message: "All fields are required",
+            });
+        }
 
-   try {
-       if (!username || !password) {
-           return res.status(400).json({ message: "All fields are required" });
-       }
+        const user = await User.findOne({ username });
 
+        if (!user) {
+            return res.status(400).json({
+                message: "User doesn't exist",
+            });
+        }
 
-       const user = await User.findOne({ username });
+        const isMatch = await bcrypt.compare(password, user.password);
 
+        if (!isMatch) {
+            return res.status(400).json({
+                message: "Invalid password",
+            });
+        }
 
-       if (!user) {
-           return res.status(400).json({ message: "User doesn't exist" });
-       }
+        const token = jwt.sign(
+            { id: user._id },
+            process.env.JWT_SECRET,
+            { expiresIn: "1d" }
+        );
 
+        res.cookie("jwt", token, {
+            httpOnly: true,
+            maxAge: 24 * 60 * 60 * 1000,
+            sameSite: "lax",
+            secure: false,
+            path: "/",
+        });
 
-       const isMatch = await bcrypt.compare(password, user.password);
+        return res.status(200).json({
+            id: user._id,
+            username: user.username,
+            message: "Logged in successfully",
+        });
 
+    } catch (error) {
+        console.error("Login error:", error);
 
-       if (!isMatch) {
-           return res.status(400).json({ message: "Invalid password" });
-       }
-
-
-       const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-           expiresIn: "1d",
-       });
-
-
-       res.cookie("jwt", token, {
-           httpOnly: false,
-           expires: new Date(Date.now() + 24 * 60 * 60 * 1000),
-           sameSite: "none",
-           secure: true,
-       });
-
-
-       res.status(200).json({
-           id: user._id,
-           message: "Logged in sucessful",
-       });
-   } catch (error) {
-       console.error(error);
-       res.status(500).json({ message: "Internal server error" });
-   }
+        return res.status(500).json({
+            message: "Internal server error",
+        });
+    }
 };
 
 const logoutUser = async (req, res) => {
    try {
-       res.cookie("jwt", "", {
-           httpOnly: false,
-           secure: true,
-           sameSite: "none",
-           expires: new Date(0),
+       res.clearCookie("jwt", {
+           httpOnly: true,
+           secure: false,
+           sameSite: "lax",
+           path: "/",
        });
-       res.status(200).json({ message: "Logged out successfully" });
+       return res.status(200).json({ message: "Logged out successfully" });
    } catch (error) {
-       res.status(500).json({ message: error.message });
+       console.error("Logout error:", error);
+       return res.status(500).json({
+              message: "Internal server error",
+       })
    }
 };
 
 
 const userProfile = async (req, res) => {
-   try {
-       const token =
-    req.headers.authorization?.split(" ")[1] ||
-    req.cookies?.jwt;
+    try {
+        const user = req.user;
 
-if (!token) {
-    return res.status(401).json({ message: "No token provided" });
-}
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+            });
+        }
 
-       const decoded = jwt.decode(token, process.env.JWT_SECRET);
-       if (!decoded) {
-           return res.status(401).json({ message: "Invalid token" });
-       }
-       const { id } = decoded;
+        res.status(200).json({
+            id: user._id,
+            username: user.username,
+            email: user.email,
+        });
+    } catch (error) {
+        console.error("Profile error:", error);
 
-
-       const user = await User.findById(id);
-       if (!user) {
-           return res.status(404).json({ message: "User not found" });
-       }
-
-
-       res.status(200).json({
-           id: user._id,
-           username: user.username,
-       });
-   } catch (error) {
-       res.status(500).json({ message: error.message });
-   }
+        res.status(500).json({
+            message: "Internal server error",
+        });
+    }
 };
 
 

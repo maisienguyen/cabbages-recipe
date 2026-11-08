@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
 
 function UserLogin() {
   const [username, setUsername] = useState('')
@@ -8,7 +9,7 @@ function UserLogin() {
   const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
-
+  const { refreshUser } = useAuth()
   const handleSubmit = async (event) => {
     event.preventDefault()
     setError('')
@@ -30,7 +31,8 @@ function UserLogin() {
         throw new Error(data.message || 'Login failed')
       }
 
-      navigate('/')
+      await refreshUser()
+        navigate('/')
     } catch (error) {
       setError(error.message || 'Unable to connect to the server')
     } finally {
