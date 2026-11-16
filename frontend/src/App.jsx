@@ -5,6 +5,7 @@ import UserRegister from './pages/userRegister.jsx'
 import { useAuth } from './context/AuthContext'
 import { useState } from 'react'
 import { ChevronDown, UserRound, Settings, BookOpen, LogOut } from 'lucide-react'
+import Recipes from './pages/recipes.jsx'
 import './App.css'
 
 
@@ -106,7 +107,7 @@ const latestRecipes = [
     title: 'Berry overnight oats',
     category: 'Breakfast',
     time: 10,
-    author: 'Mai Nguyen',
+    author: 'Ella Lopez',
     likes: 18,
     comments: 3,
     published: 'Oct 1, 2026 · 07:00 UTC',
@@ -389,12 +390,13 @@ function App() {
       />
 
       <Route path="/create-recipe" element={<CreateRecipe />}/>
-
       <Route path="/login" element={<UserLogin />} />
-  <Route path="/register" element={<UserRegister />} />
+      <Route path="/register" element={<UserRegister />} />
+      <Route path="/recipes" element={<Recipes />} />
     </Routes>
 
   )
 }
+
 
 export default App
