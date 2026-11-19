@@ -1053,3 +1053,37 @@ input:focus-visible {
     align-items: flex-start;
   }
 }
+/* No recipes found */
+.no-recipes {
+  grid-column: 1 / -1;
+  padding: 60px 20px;
+  text-align: center;
+  background: #f8f8f4;
+  border: 1px solid #e8e8df;
+  border-radius: 14px;
+}
+
+.no-recipes h3 {
+  color: #30372b;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+
+.no-recipes p {
+  color: #777;
+  margin-bottom: 20px;
+}
+
+.no-recipes button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #566b43;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.no-recipes button:hover {
+  background: #425535;
+}

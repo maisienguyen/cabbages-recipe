@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-
+import { useState } from "react";
 
 const recipes = [
   {
@@ -61,6 +61,30 @@ const recipes = [
 ]
 
 function Recipes() {
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [sortBy, setSortBy] = useState('latest');
+
+  const filteredRecipes = recipes
+    .filter((recipe) => {
+      const matchesSearch =
+        recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        recipe.author.toLowerCase().includes(searchQuery.toLowerCase())
+
+      const matchesCategory =
+        selectedCategory === 'all' ||
+        recipe.category.toLowerCase() === selectedCategory
+
+      return matchesSearch && matchesCategory
+    })
+    .sort((a, b) => {
+      if (sortBy === 'popular') {
+        return b.likes - a.likes
+      }
+
+      return a.id - b.id
+    })
+
     return (
     <main className="recipe-page">
      <section className="recipes-header">
@@ -99,11 +123,17 @@ function Recipes() {
       type="search"
       placeholder="Search recipes, ingredients..."
       aria-label="Search recipes"
+      value={searchQuery}
+      onChange={(e) => setSearchQuery(e.target.value)}
     />
   </div>
 
   <div className="recipes-filters">
-    <select defaultValue="all" aria-label="Filter by category">
+    <select
+    value={selectedCategory}
+    onChange={(e) => setSelectedCategory(e.target.value)}
+    aria-label="Filter recipes by category"
+    >    
       <option value="all">All categories</option>
       <option value="breakfast">Breakfast</option>
       <option value="lunch">Lunch</option>
@@ -113,44 +143,66 @@ function Recipes() {
       <option value="drinks">Drinks</option>
     </select>
 
-    <select defaultValue="latest" aria-label="Sort recipes">
+    <select 
+    value={sortBy}
+    onChange={(e) => setSortBy(e.target.value)}
+    aria-label="Sort recipes"
+    >
       <option value="latest">Newest first</option>
       <option value="popular">Most liked</option>
     </select>
   </div>
 </div>
 
-    
-<div className="recipes-grid">
-  {recipes.map((recipe) => (
-    <article className="recipe-card" key={recipe.id}>
-      <div className="recipe-image">
-        <img src={recipe.image} alt={recipe.title} />
-      </div>
 
-      <div className="recipe-card-content">
-        <div className="recipe-meta">
-          <span>{recipe.category}</span>
-          <span>{recipe.time} min</span>
+{filteredRecipes.length > 0 ? (
+  <div className="recipes-grid">
+    {filteredRecipes.map((recipe) => (
+      <article className="recipe-card" key={recipe.id}>
+        <div className="recipe-image">
+          <img src={recipe.image} alt={recipe.title} />
         </div>
 
-        <h3>{recipe.title}</h3>
+        <div className="recipe-card-content">
+          <div className="recipe-meta">
+            <span>{recipe.category}</span>
+            <span>{recipe.time} min</span>
+          </div>
 
-        <p>By {recipe.author}</p>
+          <h3>{recipe.title}</h3>
 
-        <div className="recipe-card-footer">
-          <span>♡ {recipe.likes} likes</span>
+          <p>By {recipe.author}</p>
 
-          <Link to={`/recipes/${recipe.id}`}>
-            View recipe →
-          </Link>
+          <div className="recipe-card-footer">
+            <span>♡ {recipe.likes} likes</span>
+
+            <Link to={`/recipes/${recipe.id}`}>
+              View recipe →
+            </Link>
+          </div>
         </div>
-      </div>
-    </article>
-  ))}
-</div>
-      </section>
-    </main>
-  )
+      </article>
+    ))}
+  </div>
+) : (
+  <div className="no-recipes">
+    <h3>No recipes found</h3>
+    <p>Try another search term or category.</p>
+
+    <button
+      type="button"
+      onClick={() => {
+        setSearchQuery('')
+        setSelectedCategory('all')
+        setSortBy('latest')
+      }}
+    >
+      Clear filters
+    </button>
+  </div>
+)}
+</section>
+</main>
+    )
 }
 export default Recipes
