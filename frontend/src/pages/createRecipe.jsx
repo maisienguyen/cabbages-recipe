@@ -14,18 +14,112 @@ function createRecipe() {
     instructions: '',
     image: '',
   })
+const [imageFile, setImageFile] = useState(null)
+const [imagePreview, setImagePreview] = useState('')
 
-  const handleChange = (e) => {
+const handleChange = (e) => {
+    const { name, value } = e.target
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     })
+
+    if (name === 'image') {
+      setImageFile(null)
+      setImagePreview('')
+    }
   }
 
-  const handleSubmit = (e) => {
+  const handleImageUpload = (e) => {
+  const file = e.target.files[0]
+
+  if (!file) return
+
+  if (!file.type.startsWith('image/')) {
+    alert('Please select a valid image file.')
+    e.target.value = ''
+    return
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    alert('Image size should not exceed 5MB.')
+    e.target.value = ''
+    return
+  }
+
+  setImageFile(file)
+  setImagePreview(URL.createObjectURL(file))
+
+  setFormData((prev) => ({
+    ...prev,
+    image: '',
+  }))
+}
+
+const handleRemoveImage = () => {
+  setImageFile(null)
+  setImagePreview('')
+
+  setFormData((prev) => ({
+    ...prev,
+    image: '',
+  }))
+
+  const fileInput = document.getElementById('imageFile')
+
+  if (fileInput) {
+    fileInput.value = ''
+  }
+}
+
+  const handleSubmit = async(e) => {
     e.preventDefault()
-    alert('Recipe form is ready!')
-    console.log(formData)
+   
+    try {
+      const data = new FormData()
+
+      data.append('title', formData.title)
+      data.append('description', formData.description)
+      data.append('category', formData.category)
+      data.append('prepTime', formData.prepTime)
+      data.append('cookingTime', formData.cookingTime)
+      data.append('servings', formData.servings)
+
+      formData.ingredients
+        .split('\n')
+        .filter((item) => item.trim() !== '')
+        .forEach((item) => data.append('ingredients', item.trim()))
+
+      formData.instructions
+        .split('\n')
+        .filter((item) => item.trim() !== '')
+        .forEach((item) => data.append('instructions', item.trim()))
+
+      if (imageFile) {
+        data.append('image', imageFile)
+      } else if (formData.image) {
+        data.append('image', formData.image)
+      }
+
+      const response = await fetch('http://localhost:5000/api/recipes', {
+        method: 'POST',
+        credentials: 'include',
+        body: data,
+      })
+
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Failed to create recipe')
+      }
+
+      alert('Recipe created successfully!')
+      console.log('Recipe created:', result)
+
+    } catch (error) {
+      console.error('Error creating recipe:', error)
+      alert('Error creating recipe: ' + error.message)
+    }
   }
 
   return (
@@ -181,18 +275,42 @@ function createRecipe() {
           <section className="form-section">
             <h2>Recipe image</h2>
             <p className="form-section-description">
-              Add an image URL for your finished dish.
+              Upload an image or provide an image URL for your finished dish.
             </p>
 
-            <label htmlFor="image">Image URL</label>
+            <label htmlFor="imageFile">Upload image</label>
             <input
-              id="image"
+              id="imageFile"
+              name="imageFile"
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+            />  
+            <label htmlFor = "image">Or provide an image URL</label>
+            <input
+              id="image"  
               name="image"
               type="url"
               placeholder="https://example.com/recipe-image.jpg"
               value={formData.image}
               onChange={handleChange}
-            />
+            />  
+            {(imagePreview || formData.image) && (
+              <div className="image-preview">
+                <img
+                  src={imagePreview || formData.image}
+                  alt="Recipe preview"
+                  />
+                <button 
+                  type="button" 
+                  onClick={handleRemoveImage}
+                  className="remove-image-button"
+                  >
+                    Remove Image
+                  </button>
+              </div>
+            )}
+
           </section>
 
           <div className="create-recipe-actions">

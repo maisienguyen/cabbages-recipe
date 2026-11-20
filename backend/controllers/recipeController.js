@@ -67,6 +67,10 @@ const createRecipe = async (req, res) => {
       isDraft,
     } = req.body
 
+    const imagePath = req.file
+      ? `/uploads/${req.file.filename}`
+      : image || ''
+
     const recipe = await Recipe.create({
       title,
       description,
@@ -75,8 +79,8 @@ const createRecipe = async (req, res) => {
       instructions,
       cookingTime,
       servings,
-      image,
-      isDraft: isDraft === true,
+      image: imagePath,
+      isDraft: isDraft === 'true' || isDraft === true,
       author: req.user._id,
     })
 
