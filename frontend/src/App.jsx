@@ -1,5 +1,5 @@
 import { Link, Routes, Route } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import CreateRecipe from './pages/createRecipe.jsx'
 import UserLogin from './pages/userLogin.jsx'
 import UserRegister from './pages/userRegister.jsx'
@@ -18,108 +18,10 @@ const categories = [
   { name: 'Drinks', count: 2 },
 ]
 
-const popularRecipes = [
-  {
-    id: 1,
-    title: 'One-pan tomato pasta',
-    category: 'Dinner',
-    time: 30,
-    author: 'Jordan Lee',
-    likes: 41,
-    comments: 12,
-    image:
-      'https://images.unsplash.com/photo-1473093295043-cdd812d0e601?auto=format&fit=crop&w=800&q=85',
-  },
-  {
-    id: 2,
-    title: 'Lemon chickpea salad',
-    category: 'Lunch',
-    time: 20,
-    author: 'Maya Chen',
-    likes: 32,
-    comments: 8,
-    image:
-      'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=800&q=85',
-  },
-  {
-    id: 3,
-    title: 'Roasted salmon & vegetables',
-    category: 'Dinner',
-    time: 45,
-    author: 'Sam Taylor',
-    likes: 29,
-    comments: 7,
-    image:
-      'https://images.unsplash.com/photo-1676300185165-3f543c1fcb72?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-  },
-  {
-    id: 4,
-    title: 'Avocado toast with poached egg',
-    category: 'Breakfast',
-    time: 15,
-    author: 'Maya Chen',
-    likes: 24,
-    comments: 6,
-    image:
-      'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=85',
-  },
-]
-
-const latestRecipes = [
-  {
-    id: 5,
-    title: 'Crispy spiced chickpeas',
-    category: 'Snack',
-    time: 25,
-    author: 'Alex Rivera',
-    likes: 7,
-    comments: 2,
-    published: 'Oct 4, 2026 · 08:00 UTC',
-    image:
-      'https://images.unsplash.com/photo-1515543904379-3d757afe72e4?auto=format&fit=crop&w=800&q=85',
-  },
-  {
-    id: 6,
-    title: 'Apple cinnamon crumble',
-    category: 'Dessert',
-    time: 50,
-    author: 'Sam Taylor',
-    likes: 12,
-    comments: 3,
-    published: 'Oct 3, 2026 · 16:45 UTC',
-    image:
-      'https://plus.unsplash.com/premium_photo-1695865414399-83a1b82d87ef?q=80&w=688&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-  },
-  {
-    id: 7,
-    title: 'Avocado toast with poached egg',
-    category: 'Breakfast',
-    time: 15,
-    author: 'Maisie Kim',
-    likes: 24,
-    comments: 6,
-    published: 'Oct 2, 2026 · 09:30 UTC',
-    image:
-      'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=800&q=85',
-  },
-  {
-    id: 8,
-    title: 'Berry overnight oats',
-    category: 'Breakfast',
-    time: 10,
-    author: 'Ella Lopez',
-    likes: 18,
-    comments: 3,
-    published: 'Oct 1, 2026 · 07:00 UTC',
-    image:
-      'https://images.unsplash.com/photo-1619854231899-33ee7003dd8d?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-  },
-]
-
 function RecipeCard({ recipe, rank, latest = false }) {
   const [isLiked, setIsLiked] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
-  const [likeCount, setLikeCount] = useState(recipe.likes)
+  const [likeCount, setLikeCount] = useState(recipe.likedBy?.length || 0)
   const handleLike = () => {
   const nextLiked = !isLiked
 
@@ -130,7 +32,17 @@ function RecipeCard({ recipe, rank, latest = false }) {
   return (
     <article className="recipe-card">
       <div className="recipe-image">
-        <img src={recipe.image} alt={recipe.title} loading="lazy" />
+        <img
+  src={
+    !recipe.image
+      ? '/placeholder-recipe.jpg'
+      : recipe.image.startsWith('http')
+        ? recipe.image
+        : `http://localhost:5000${recipe.image}`
+  }
+  alt={recipe.title}
+  loading="lazy"
+/>
 
         {rank && <span className="rank">#{rank} most liked</span>}
       </div>
@@ -138,12 +50,14 @@ function RecipeCard({ recipe, rank, latest = false }) {
       <div className="recipe-content">
         <div className="recipe-meta">
           <span>{recipe.category}</span>
-          <span>{recipe.time} min</span>
+          <span>{recipe.cookingTime} min</span>
         </div>
 
         <h3>{recipe.title}</h3>
 
-        <p className="recipe-author">By {recipe.author}</p>
+        <p className="recipe-author">
+        By {recipe.author?.username || 'Unknown'}
+        </p>
 
         {latest && recipe.published && (
           <p className="recipe-published">
@@ -189,19 +103,48 @@ function RecipeCard({ recipe, rank, latest = false }) {
   </button>
 </div>
 
-        <button
-          type="button"
-          className="view-button"
-          onClick={() => alert(`Recipe details: ${recipe.title}`)}
-        >
-          View recipe <span>→</span>
-        </button>
+       <Link to={`/recipes/${recipe._id}`} className="view-button">
+  View recipe <span>→</span>
+</Link>
       </div>
     </article>
   )
 }
 
 function App() {
+const [recipes, setRecipes] = useState([])
+const [loadingRecipes, setLoadingRecipes] = useState(true)
+const [recipesError, setRecipesError] = useState('')
+
+useEffect(() => {
+  const fetchRecipes = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/recipes')
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch recipes')
+      }
+
+      const data = await response.json()
+      setRecipes(data)
+    } catch (error) {
+      setRecipesError(error.message)
+    } finally {
+      setLoadingRecipes(false)
+    }
+  }
+
+  fetchRecipes()
+}, [])
+
+const popularRecipes = [...recipes]
+  .sort((a, b) => (b.likedBy?.length || 0) - (a.likedBy?.length || 0))
+  .slice(0, 4)
+
+const latestRecipes = [...recipes]
+  .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+  .slice(0, 4)
+
   const handleSearch = (event) => {
     event.preventDefault()
 
@@ -276,6 +219,7 @@ function App() {
         </section>
 
         <section className="section">
+          
           <div className="section-heading">
             <div>
               <h2>Most liked recipes</h2>
@@ -288,16 +232,21 @@ function App() {
               View most liked →
             </Link>
           </div>
+          {loadingRecipes && <p>Loading recipes...</p>}
 
-          <div className="recipe-grid">
-            {popularRecipes.map((recipe, index) => (
-              <RecipeCard
-                key={recipe.id}
-                recipe={recipe}
-                rank={index + 1}
-              />
-            ))}
-          </div>
+          {recipesError && <p>{recipesError}</p>}
+
+          {!loadingRecipes && !recipesError && (
+            <div className="recipe-grid">
+              {popularRecipes.map((recipe, index) => (
+                <RecipeCard
+                  key={recipe._id}
+                  recipe={recipe}
+                  rank={index + 1}
+                />
+              ))}
+            </div>
+          )}
         </section>
 
         <section className="section latest-section">
@@ -310,15 +259,20 @@ function App() {
             <Link to="/recipes?sort=latest">View latest →</Link>
           </div>
 
-          <div className="recipe-grid">
-            {latestRecipes.map((recipe) => (
-              <RecipeCard
-                key={recipe.id}
-                recipe={recipe}
-                latest
-              />
-            ))}
-          </div>
+          {loadingRecipes && <p>Loading recipes...</p>}
+          {recipesError && <p>{recipesError}</p>}
+
+          {!loadingRecipes && !recipesError && (
+            <div className="recipe-grid">
+              {latestRecipes.map((recipe) => (
+                <RecipeCard
+                  key={recipe.id}
+                  recipe={recipe}
+                  latest
+                />
+              ))}
+            </div>
+          )}
         </section>
       </main>
 
