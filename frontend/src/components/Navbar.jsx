@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import { useState } from 'react'
 import { useAuth } from '../context/authContext'
 import { UserRound, BookOpen, LogOut } from 'lucide-react'
@@ -14,10 +14,18 @@ function Navbar() {
       </Link>
 
       <nav className="nav-links">
-        <Link to="/">Home</Link>
-        <Link to="/recipes">Recipes</Link>
-        <Link to="/user">My profile</Link>
-      </nav>
+         <NavLink to="/" end>
+         Home
+         </NavLink>
+
+         <NavLink to="/recipes">
+         Recipes
+         </NavLink>
+
+        <NavLink to="/user">
+        My profile
+        </NavLink>
+       </nav>
 
       <div className="nav-user">
         {user ? (

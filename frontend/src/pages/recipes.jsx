@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import { Heart, Bookmark, MessageCircle } from 'lucide-react'
 
 const recipes = [
   {
@@ -59,6 +60,76 @@ const recipes = [
 },
 
 ]
+
+
+function RecipeListCard({ recipe }) {
+  const [isLiked, setIsLiked] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
+  const [likeCount, setLikeCount] = useState(recipe.likes)
+
+  const handleLike = () => {
+    const nextLiked = !isLiked
+    setIsLiked(nextLiked)
+    setLikeCount((count) => count + (nextLiked ? 1 : -1))
+  }
+
+  return (
+    <article className="recipe-card">
+      <div className="recipe-image">
+        <img src={recipe.image} alt={recipe.title} loading="lazy" />
+      </div>
+
+      <div className="recipe-card-content">
+        <div className="recipe-meta">
+          <span>{recipe.category}</span>
+          <span>{recipe.time} min</span>
+        </div>
+
+        <h3>{recipe.title}</h3>
+
+        <p>By {recipe.author}</p>
+
+        <div className="recipe-card-footer">
+        <div className="recipe-engagement">
+            <button
+              type="button"
+              className={`interaction-button like-button ${isLiked ? 'active' : ''}`}
+              onClick={handleLike}
+              aria-pressed={isLiked}
+            >
+               <Heart size={18} fill={isLiked ? 'currentColor' : 'none'} />
+                <span>{likeCount}</span>
+                </button>
+
+            <span className="comment-count">
+              <MessageCircle size={17} />
+            <span>{recipe.comments || 0}</span> 
+            </span>
+          </div>
+
+          <button
+            type="button"
+            className={`interaction-button save-button ${isSaved ? 'active' : ''}`}
+            onClick={() => setIsSaved((previous) => !previous)}
+            aria-label={isSaved ? 'Unsaved recipe' : 'Save recipe'}
+          >
+            <Bookmark
+              size={19}
+              fill={isSaved ? 'currentColor' : 'none'}
+            />
+          </button>
+        </div>
+
+        <Link
+          to={`/recipes/${recipe.id}`}
+          className="view-button"
+        >
+          View recipe <span>→</span>
+        </Link>
+      </div>
+    </article>
+  )
+}
 
 function Recipes() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -224,50 +295,29 @@ function Recipes() {
     {filteredRecipes.length > 0 ? (
       <div className="recipes-grid">
         {filteredRecipes.map((recipe) => (
-          <article className="recipe-card" key={recipe.id}>
-            <div className="recipe-image">
-              <img src={recipe.image} alt={recipe.title} />
-            </div>
+          
+            <RecipeListCard key={recipe.id} recipe={recipe} />
+    ))}
+  </div>
+) : (
+  <div className="no-recipes">
+    <h3>No recipes found</h3>
+    <p>Try another search term or category.</p>
 
-            <div className="recipe-card-content">
-              <div className="recipe-meta">
-                <span>{recipe.category}</span>
-                <span>{recipe.time} min</span>
-              </div>
+    <button
+      type="button"
+      onClick={() => {
+        setSearchQuery('')
+        setSelectedCategory('all')
+        setSelectedTime('all')
+        setSortBy('latest')
+      }}
+    >
+      Clear filters
+    </button>
+  </div>
+)}
 
-              <h3>{recipe.title}</h3>
-
-              <p>By {recipe.author}</p>
-
-              <div className="recipe-card-footer">
-                <span>♡ {recipe.likes} likes</span>
-
-                <Link to={`/recipes/${recipe.id}`}>
-                  View recipe →
-                </Link>
-              </div>
-            </div>
-          </article>
-        ))}
-      </div>
-    ) : (
-      <div className="no-recipes">
-        <h3>No recipes found</h3>
-        <p>Try another search term or category.</p>
-
-        <button
-          type="button"
-          onClick={() => {
-            setSearchQuery('')
-            setSelectedCategory('all')
-            setSelectedTime('all')
-            setSortBy('latest')
-          }}
-        >
-          Clear filters
-        </button>
-      </div>
-    )}
   </div>
 </div>
 </section>

@@ -1,9 +1,11 @@
 import { Link, Routes, Route } from 'react-router-dom'
+import { useState } from 'react'
 import CreateRecipe from './pages/createRecipe.jsx'
 import UserLogin from './pages/userLogin.jsx'
 import UserRegister from './pages/userRegister.jsx'
 import Recipes from './pages/recipes.jsx'
 import Navbar from './components/Navbar'
+import {Bookmark} from 'lucide-react'
 import './App.css'
 
 
@@ -115,6 +117,16 @@ const latestRecipes = [
 ]
 
 function RecipeCard({ recipe, rank, latest = false }) {
+  const [isLiked, setIsLiked] = useState(false)
+  const [isSaved, setIsSaved] = useState(false)
+  const [likeCount, setLikeCount] = useState(recipe.likes)
+  const handleLike = () => {
+  const nextLiked = !isLiked
+
+  setIsLiked(nextLiked)
+  setLikeCount((count) => count + (nextLiked ? 1 : -1))
+}
+
   return (
     <article className="recipe-card">
       <div className="recipe-image">
@@ -142,23 +154,34 @@ function RecipeCard({ recipe, rank, latest = false }) {
         <div className="recipe-actions">
           <button
             type="button"
-            className="like-button"
-            aria-label={`Like ${recipe.title}`}
-            onClick={() => alert('Like functionality will be added later.')}
+            className={'interactive-button like-button' + (isLiked ? ' liked' : '')}
+            aria-label={isLiked ? 'Unlike recipe' : 'Like recipe'}
+            aria-pressed={isLiked}
+            onClick={() => {
+            console.log('LIKE BUTTON CLICKED')
+            handleLike()
+}}
           >
-            Like · {recipe.likes}
+            <span>{isLiked ? '♥' : '♡'}</span>
+            {likeCount}
           </button>
 
           <span className="comment-count">
-            {recipe.comments} comments
+          <span>▢</span> {recipe.comments} comments
           </span>
 
           <button
             type="button"
-            className="save-button"
-            onClick={() => alert('Save functionality will be added later.')}
+            className={`interaction-button save-button ${isSaved ? 'active' : ''}`}
+            onClick={() => setIsSaved((previous) => !previous)}
+             aria-label={isSaved ? 'Remove from saved recipes' : 'Save recipe'}
+            aria-pressed={isSaved}
           >
-            Save
+            <Bookmark
+             size={19}
+             fill={isSaved ? 'currentColor' : 'none'}
+              strokeWidth={1.8}
+  />
           </button>
         </div>
 
@@ -167,7 +190,7 @@ function RecipeCard({ recipe, rank, latest = false }) {
           className="view-button"
           onClick={() => alert(`Recipe details: ${recipe.title}`)}
         >
-          View recipe →
+          View recipe <span>→</span>
         </button>
       </div>
     </article>
