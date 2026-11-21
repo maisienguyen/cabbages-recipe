@@ -2,10 +2,8 @@ import { Link, Routes, Route } from 'react-router-dom'
 import CreateRecipe from './pages/createRecipe.jsx'
 import UserLogin from './pages/userLogin.jsx'
 import UserRegister from './pages/userRegister.jsx'
-import { useAuth } from './context/AuthContext'
-import { useState } from 'react'
-import { ChevronDown, UserRound, Settings, BookOpen, LogOut } from 'lucide-react'
 import Recipes from './pages/recipes.jsx'
+import Navbar from './components/Navbar'
 import './App.css'
 
 
@@ -177,8 +175,6 @@ function RecipeCard({ recipe, rank, latest = false }) {
 }
 
 function App() {
-  const { user, logout } = useAuth()
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   const handleSearch = (event) => {
     event.preventDefault()
 
@@ -193,90 +189,13 @@ function App() {
   }
 
     return (
+      <>
+      <Navbar />
     <Routes>
       <Route
         path="/"
         element={
           <div className="app">
-      <header className="navbar">
-        <Link className="brand" to="/">
-          Cabbages Recipe
-        </Link>
-
-        <nav className="nav-links">
-          <Link className="active" to="/">
-            Home
-          </Link>
-          <Link to="/recipes">Recipes</Link>
-          <Link to="/user">My profile</Link>
-        </nav>
-
-<div className="nav-user">
-  {user ? (
-    <>
-    
-<button
-  type="button"
-  className="profile-link"
-  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
->
-  <span className="avatar">
-    {user.username.charAt(0).toUpperCase()}
-  </span>
-
-  <span className="username">{user.username}</span>
-
-</button>
-
-{isDropdownOpen && (
-  <div className="dropdown-menu">
-    <Link
-      to="/user"
-      className="dropdown-item"
-      onClick={() => setIsDropdownOpen(false)}
-    >
-      <UserRound size={16} />
-      My Profile
-    </Link>
-
-    <Link
-      to="/my-recipes"
-      className="dropdown-item"
-      onClick={() => setIsDropdownOpen(false)}
-    >
-      <BookOpen size={16} />
-      My Recipes
-    </Link>
-
-    <button
-      type="button"
-      className="dropdown-item"
-      onClick={() => {
-        setIsDropdownOpen(false)
-        logout()
-      }}
-    >
-      <LogOut size={16} />
-      Log out
-    </button>
-  </div>
-)}
-
-    
-    </>
-  ) : (
-    <>
-      <Link to="/login" className="login-button">
-        Log in
-      </Link>
-
-  <Link to="/register" className="register-button">
-    Register
-  </Link>
-  </>
-  )}
-</div>
-      </header>
 
       <main className="container">
         <section className="hero-section">
@@ -394,7 +313,7 @@ function App() {
       <Route path="/register" element={<UserRegister />} />
       <Route path="/recipes" element={<Recipes />} />
     </Routes>
-
+    </>
   )
 }
 

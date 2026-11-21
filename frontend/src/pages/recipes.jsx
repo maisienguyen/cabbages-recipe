@@ -64,6 +64,7 @@ function Recipes() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [sortBy, setSortBy] = useState('latest');
+    const [selectedTime, setSelectedTime] = useState('all');
 
   const filteredRecipes = recipes
     .filter((recipe) => {
@@ -74,8 +75,15 @@ function Recipes() {
       const matchesCategory =
         selectedCategory === 'all' ||
         recipe.category.toLowerCase() === selectedCategory
+      
+      const matchesTime =
+        selectedTime === 'all' ||
+        selectedTime === "15-30" && recipe.time >= 15 && recipe.time <= 30 ||
+        selectedTime === "30-60" && recipe.time > 30 && recipe.time <= 60 ||
+        selectedTime === "60+" && recipe.time > 60
 
-      return matchesSearch && matchesCategory
+      return matchesSearch && matchesCategory && matchesTime
+  
     })
     .sort((a, b) => {
       if (sortBy === 'popular') {
@@ -86,7 +94,7 @@ function Recipes() {
     })
 
     return (
-    <main className="recipe-page">
+    <main className="recipes-page">
      <section className="recipes-header">
         <div className="recipes-header-content">
             <div>
@@ -106,103 +114,173 @@ function Recipes() {
     
       </section>
     
-<section className="recipe-content">
-    <div className="recipe-heading">
+<section className="recipes-content">
+    <div className="recipes-heading">
         <div>
             <h2>All recipes</h2>
             <p>Explore recipes from home cooks, for home cooks.</p>
         </div>
-     
-    
-        </div>
-    
-
-<div className="recipes-toolbar">
-  <div className="recipes-search">
-    <input
-      type="search"
-      placeholder="Search recipes, ingredients..."
-      aria-label="Search recipes"
-      value={searchQuery}
-      onChange={(e) => setSearchQuery(e.target.value)}
-    />
-  </div>
-
-  <div className="recipes-filters">
-    <select
-    value={selectedCategory}
-    onChange={(e) => setSelectedCategory(e.target.value)}
-    aria-label="Filter recipes by category"
-    >    
-      <option value="all">All categories</option>
-      <option value="breakfast">Breakfast</option>
-      <option value="lunch">Lunch</option>
-      <option value="dinner">Dinner</option>
-      <option value="snack">Snack</option>
-      <option value="dessert">Dessert</option>
-      <option value="drinks">Drinks</option>
-    </select>
-
-    <select 
-    value={sortBy}
-    onChange={(e) => setSortBy(e.target.value)}
-    aria-label="Sort recipes"
-    >
-      <option value="latest">Newest first</option>
-      <option value="popular">Most liked</option>
-    </select>
-  </div>
-</div>
-
-
-{filteredRecipes.length > 0 ? (
-  <div className="recipes-grid">
-    {filteredRecipes.map((recipe) => (
-      <article className="recipe-card" key={recipe.id}>
-        <div className="recipe-image">
-          <img src={recipe.image} alt={recipe.title} />
         </div>
 
-        <div className="recipe-card-content">
-          <div className="recipe-meta">
-            <span>{recipe.category}</span>
-            <span>{recipe.time} min</span>
-          </div>
 
-          <h3>{recipe.title}</h3>
+<div className="recipes-layout">
+  <aside className="recipes-sidebar">
+    <div className="filter-heading">
+      <h3>Filters</h3>
+      <button
+        type="button"
+        onClick={() => {
+          setSearchQuery('')
+          setSelectedCategory('all')
+          setSelectedTime('all')
+          setSortBy('latest')
+        }}
+      >
+        Reset all
+      </button>
+    </div>
 
-          <p>By {recipe.author}</p>
+    <div className="filter-group">
+      <h4>Meal category</h4>
 
-          <div className="recipe-card-footer">
-            <span>♡ {recipe.likes} likes</span>
+      {[
+        ['all', 'All categories'],
+        ['breakfast', 'Breakfast'],
+        ['snack', 'Snack'],
+        ['lunch', 'Lunch'],
+        ['dinner', 'Dinner'],
+        ['dessert', 'Dessert'],
+        ['drinks', 'Drinks'],
+      ].map(([value, label]) => (
+        <label key={value} className="filter-option">
+          <input
+            type="radio"
+            name="category"
+            value={value}
+            checked={selectedCategory === value}
+            onChange={() => setSelectedCategory(value)}
+          />
+          {label}
+        </label>
+      ))}
+    </div>
 
-            <Link to={`/recipes/${recipe.id}`}>
-              View recipe →
-            </Link>
-          </div>
-        </div>
-      </article>
-    ))}
-  </div>
-) : (
-  <div className="no-recipes">
-    <h3>No recipes found</h3>
-    <p>Try another search term or category.</p>
+    <div className="filter-group">
+      <h4>Cooking time</h4>
+
+      {[
+        ['all', 'Any time'],
+        ['15-30', '15–30 minutes'],
+        ['31-60', '31–60 minutes'],
+        ['over-60', 'Over 60 minutes'],
+      ].map(([value, label]) => (
+        <label key={value} className="filter-option">
+          <input
+            type="radio"
+            name="cookingTime"
+            value={value}
+            checked={selectedTime === value}
+            onChange={() => setSelectedTime(value)}
+          />
+          {label}
+        </label>
+      ))}
+    </div>
 
     <button
       type="button"
-      onClick={() => {
-        setSearchQuery('')
-        setSelectedCategory('all')
-        setSortBy('latest')
-      }}
+      className="apply-filters-button"
     >
-      Clear filters
+      Apply filters
     </button>
+  </aside>
+
+  <div className="recipes-main">
+    <div className="recipes-toolbar">
+      <div className="recipes-search">
+        <input
+          type="search"
+          placeholder="Search recipes, ingredients..."
+          aria-label="Search recipes"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+      </div>
+
+      <select
+        value={sortBy}
+        onChange={(e) => setSortBy(e.target.value)}
+        aria-label="Sort recipes"
+      >
+        <option value="latest">Newest first</option>
+        <option value="popular">Most liked</option>
+      </select>
+    </div>
+
+    <div className="recipes-results-heading">
+      <h2>All recipes · {filteredRecipes.length} results</h2>
+    </div>
+
+    {filteredRecipes.length > 0 ? (
+      <div className="recipes-grid">
+        {filteredRecipes.map((recipe) => (
+          <article className="recipe-card" key={recipe.id}>
+            <div className="recipe-image">
+              <img src={recipe.image} alt={recipe.title} />
+            </div>
+
+            <div className="recipe-card-content">
+              <div className="recipe-meta">
+                <span>{recipe.category}</span>
+                <span>{recipe.time} min</span>
+              </div>
+
+              <h3>{recipe.title}</h3>
+
+              <p>By {recipe.author}</p>
+
+              <div className="recipe-card-footer">
+                <span>♡ {recipe.likes} likes</span>
+
+                <Link to={`/recipes/${recipe.id}`}>
+                  View recipe →
+                </Link>
+              </div>
+            </div>
+          </article>
+        ))}
+      </div>
+    ) : (
+      <div className="no-recipes">
+        <h3>No recipes found</h3>
+        <p>Try another search term or category.</p>
+
+        <button
+          type="button"
+          onClick={() => {
+            setSearchQuery('')
+            setSelectedCategory('all')
+            setSelectedTime('all')
+            setSortBy('latest')
+          }}
+        >
+          Clear filters
+        </button>
+      </div>
+    )}
   </div>
-)}
+</div>
 </section>
+<footer className="footer">
+  <p>Cabbages Recipe · Recipes from home cooks, for home cooks.</p>
+
+  <nav>
+    <a href="#about">About</a>
+    <a href="#guidelines">Community guidelines</a>
+    <a href="#help">Help</a>
+  </nav>
+</footer>
 </main>
-    )
+)
 }
 export default Recipes
