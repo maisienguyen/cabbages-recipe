@@ -1,9 +1,4 @@
-// GET /api/recipes/:id
-// Get one recipe by ID
 const Recipe = require('../models/recipe')
-
-// GET /api/recipes
-// Get all published recipes
 const getRecipes = async (req, res) => {
   try {
     const filter = { isDraft: false }

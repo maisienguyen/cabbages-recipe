@@ -1,93 +1,43 @@
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Heart, Bookmark, MessageCircle } from 'lucide-react'
-
-const recipes = [
-  {
-    id: 1,
-    title: 'Calamari with Lemon Butter Sauce',
-    category: 'Dinner',
-    time: 30,
-    author: 'Mai Jasmine',
-    likes: 42,
-    image: 'https://images.unsplash.com/photo-1682264895449-f75b342cbab6?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-  },
-  {
-    id: 2,
-    title: 'Tonkatsu',
-    category: 'Lunch',
-    time: 20,
-    author: 'Maisie Kim',
-    likes: 35,
-    image: 'https://images.unsplash.com/photo-1662958501205-8434357b4fc3?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-  },
-  {
-    id: 3,
-    title: 'Roasted Salmon',
-    category: 'Dinner',
-    time: 45,
-    author: 'Sam Taylor',
-    likes: 29,
-    image: 'https://images.unsplash.com/photo-1676300185165-3f543c1fcb72?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-  },
-  {
-    id: 4,
-    title: 'Avocado Toast',
-    category: 'Breakfast',
-    time: 15,
-    author: 'Alex Rivera',
-    likes: 24,
-    image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=800',
-  },
-  
-{
-  id: 5,
-  title: 'Grilled Vegetable Wrap',
-  category: 'Lunch',
-  time: 25,
-  author: 'Ashley Mendez',
-  likes: 16,
-  image: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=800',
-},
-{
-  id: 6,
-  title: 'Berry Overnight Oats',
-  category: 'Breakfast',
-  time: 10,
-  author: 'Ella Lopez',
-  likes: 18,
-  image: 'https://images.unsplash.com/photo-1619854231899-33ee7003dd8d?q=80&w=687&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=NHwxMjA3fDA%3D',
-},
-
-]
 
 
 function RecipeListCard({ recipe }) {
   const [isLiked, setIsLiked] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
-  const [likeCount, setLikeCount] = useState(recipe.likes)
-
+  const [likeCount, setLikeCount] = useState(recipe.likedBy?.length || 0)
   const handleLike = () => {
     const nextLiked = !isLiked
     setIsLiked(nextLiked)
     setLikeCount((count) => count + (nextLiked ? 1 : -1))
   }
-
+  
   return (
     <article className="recipe-card">
       <div className="recipe-image">
-        <img src={recipe.image} alt={recipe.title} loading="lazy" />
+      <img
+    src={
+      !recipe.image
+        ? '/placeholder-recipe.jpg'
+        : recipe.image.startsWith('http')
+          ? recipe.image
+          : 'http://localhost:5000' + recipe.image
+    }
+    alt={recipe.title}
+    loading="lazy"
+        />
       </div>
 
       <div className="recipe-card-content">
         <div className="recipe-meta">
           <span>{recipe.category}</span>
-          <span>{recipe.time} min</span>
+          <span>{recipe.cookingTime} min</span>
         </div>
 
         <h3>{recipe.title}</h3>
 
-        <p>By {recipe.author}</p>
+        <p>By {recipe.author?.username || 'Unknown'}</p>
 
         <div className="recipe-card-footer">
         <div className="recipe-engagement">
@@ -121,7 +71,7 @@ function RecipeListCard({ recipe }) {
         </div>
 
         <Link
-          to={`/recipes/${recipe.id}`}
+          to={`/recipes/${recipe._id}`}
           className="view-button"
         >
           View recipe <span>→</span>
@@ -136,9 +86,35 @@ function Recipes() {
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [sortBy, setSortBy] = useState('latest');
     const [selectedTime, setSelectedTime] = useState('all');
+    const [recipes, setRecipes] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-  const filteredRecipes = recipes
+    useEffect(() => {
+  const fetchRecipes = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/api/recipes')
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch recipes')
+      }
+
+      const data = await response.json()
+      setRecipes(data)
+    } catch (error) {
+      setError(error.message)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  fetchRecipes()
+}, [])
+
+    const filteredRecipes = recipes
     .filter((recipe) => {
+      const authorName = recipe.author?.username || 'Unknown'
+
       const matchesSearch =
         recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         recipe.author.toLowerCase().includes(searchQuery.toLowerCase())
@@ -158,10 +134,10 @@ function Recipes() {
     })
     .sort((a, b) => {
       if (sortBy === 'popular') {
-        return b.likes - a.likes
+        return (b.likedBy?.length || 0) - (a.likedBy?.length || 0)
       }
-
-      return a.id - b.id
+        return new Date(b.createdAt) - new Date(a.createdAt)
+   
     })
 
     return (
@@ -291,31 +267,41 @@ function Recipes() {
     <div className="recipes-results-heading">
       <h2>All recipes · {filteredRecipes.length} results</h2>
     </div>
+    {loading && (
+  <p className="recipes-message">Loading recipes...</p>
+)}
 
-    {filteredRecipes.length > 0 ? (
-      <div className="recipes-grid">
-        {filteredRecipes.map((recipe) => (
-          
-            <RecipeListCard key={recipe.id} recipe={recipe} />
-    ))}
-  </div>
-) : (
-  <div className="no-recipes">
-    <h3>No recipes found</h3>
-    <p>Try another search term or category.</p>
+{error && (
+  <p className="recipes-message error">
+    {error}
+  </p>
+)}
 
-    <button
-      type="button"
-      onClick={() => {
-        setSearchQuery('')
-        setSelectedCategory('all')
-        setSelectedTime('all')
-        setSortBy('latest')
-      }}
-    >
-      Clear filters
-    </button>
-  </div>
+    {!loading && !error && (
+  filteredRecipes.length > 0 ? (
+    <div className="recipes-grid">
+      {filteredRecipes.map((recipe) => (
+        <RecipeListCard key={recipe._id} recipe={recipe} />
+      ))}
+    </div>
+  ) : (
+    <div className="no-recipes">
+      <h3>No recipes found</h3>
+      <p>Try another search term or category.</p>
+
+      <button
+        type="button"
+        onClick={() => {
+          setSearchQuery('')
+          setSelectedCategory('all')
+          setSelectedTime('all')
+          setSortBy('latest')
+        }}
+      >
+        Clear filters
+      </button>
+    </div>
+  )
 )}
 
   </div>

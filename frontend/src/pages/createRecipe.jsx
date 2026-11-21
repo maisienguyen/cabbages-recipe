@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import './createRecipe.css'
+import { useAuth } from '../context/authContext'
 
-function createRecipe() {
+function CreateRecipe() {
+  const { user } = useAuth()
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -73,6 +75,10 @@ const handleRemoveImage = () => {
 }
 
   const handleSubmit = async(e) => {
+    if (!user) {
+  alert('Please log in before publishing a recipe.')
+  return
+}
     e.preventDefault()
    
     try {
@@ -328,4 +334,4 @@ const handleRemoveImage = () => {
   )
 }
 
-export default createRecipe
+export default CreateRecipe

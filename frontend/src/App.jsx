@@ -5,7 +5,7 @@ import UserLogin from './pages/userLogin.jsx'
 import UserRegister from './pages/userRegister.jsx'
 import Recipes from './pages/recipes.jsx'
 import Navbar from './components/Navbar'
-import {Bookmark} from 'lucide-react'
+import { Heart, MessageCircle, Bookmark } from 'lucide-react'
 import './App.css'
 
 
@@ -152,38 +152,42 @@ function RecipeCard({ recipe, rank, latest = false }) {
         )}
 
         <div className="recipe-actions">
-          <button
-            type="button"
-            className={'interactive-button like-button' + (isLiked ? ' liked' : '')}
-            aria-label={isLiked ? 'Unlike recipe' : 'Like recipe'}
-            aria-pressed={isLiked}
-            onClick={() => {
-            console.log('LIKE BUTTON CLICKED')
-            handleLike()
-}}
-          >
-            <span>{isLiked ? '♥' : '♡'}</span>
-            {likeCount}
-          </button>
+  <div className="recipe-engagement">
+    <button
+      type="button"
+      className={`interaction-button like-button ${isLiked ? 'active' : ''}`}
+      onClick={handleLike}
+      aria-label={isLiked ? 'Unlike recipe' : 'Like recipe'}
+      aria-pressed={isLiked}
+    >
+      <Heart
+        size={19}
+        fill={isLiked ? 'currentColor' : 'none'}
+        strokeWidth={1.8}
+      />
+      <span>{likeCount}</span>
+    </button>
 
-          <span className="comment-count">
-          <span>▢</span> {recipe.comments} comments
-          </span>
+    <span className="comment-count">
+      <MessageCircle size={18} strokeWidth={1.8} />
+      <span>{recipe.comments}</span>
+    </span>
+  </div>
 
-          <button
-            type="button"
-            className={`interaction-button save-button ${isSaved ? 'active' : ''}`}
-            onClick={() => setIsSaved((previous) => !previous)}
-             aria-label={isSaved ? 'Remove from saved recipes' : 'Save recipe'}
-            aria-pressed={isSaved}
-          >
-            <Bookmark
-             size={19}
-             fill={isSaved ? 'currentColor' : 'none'}
-              strokeWidth={1.8}
-  />
-          </button>
-        </div>
+  <button
+    type="button"
+    className={`interaction-button save-button ${isSaved ? 'active' : ''}`}
+    onClick={() => setIsSaved((previous) => !previous)}
+    aria-label={isSaved ? 'Remove from saved recipes' : 'Save recipe'}
+    aria-pressed={isSaved}
+  >
+    <Bookmark
+      size={19}
+      fill={isSaved ? 'currentColor' : 'none'}
+      strokeWidth={1.8}
+    />
+  </button>
+</div>
 
         <button
           type="button"

@@ -1505,3 +1505,66 @@ input:focus-visible {
   color: #26340f;
   font-weight: 600;
 }
+/* Homepage recipe card interactions */
+
+.recipe-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.recipe-engagement {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.recipe-engagement .interaction-button,
+.recipe-engagement .comment-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.recipe-engagement .interaction-button {
+  padding: 6px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #555;
+}
+
+.recipe-engagement .interaction-button.active {
+  color: #536b24;
+}
+
+.recipe-engagement .comment-count span,
+.recipe-engagement .interaction-button span {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.recipe-actions .save-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  color: #555;
+  flex-shrink: 0;
+}
+
+.recipe-actions .save-button.active {
+  color: #536b24;
+}
