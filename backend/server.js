@@ -5,6 +5,7 @@ const router = express.Router();
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const recipeRoutes = require('./routes/recipeRoutes')
+const commentRoutes = require('./routes/commentRoutes')
 
 dotenv.config();
 
@@ -30,7 +31,7 @@ app.use(cookieParser());
 app.use(
    cors({
        origin: process.env.ORIGIN,
-       methods: ["GET", "PUT", "POST", "DELETE"],
+       methods: ["GET", "PUT", "POST", "DELETE", "PATCH"],
        credentials: true,
    })
 );
@@ -46,6 +47,6 @@ app.use("/api/users", (req, res, next) => {
     next();
 }, require("./routes/userRoutes"));
 app.use('/api/recipes', recipeRoutes)
-
+app.use('/api/comments', commentRoutes)
 app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`));
 

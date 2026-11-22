@@ -1,31 +1,104 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Heart, Bookmark, MessageCircle } from 'lucide-react'
+import { useAuth } from '../context/authContext'
 
 
 function RecipeListCard({ recipe }) {
+  const { user } = useAuth()
+
   const [isLiked, setIsLiked] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
-  const [likeCount, setLikeCount] = useState(recipe.likedBy?.length || 0)
-  const handleLike = () => {
-    const nextLiked = !isLiked
-    setIsLiked(nextLiked)
-    setLikeCount((count) => count + (nextLiked ? 1 : -1))
+  const [likeCount, setLikeCount] = useState(
+    recipe.likedBy?.length || 0
+  )
+
+  useEffect(() => {
+    setIsLiked(
+      user
+        ? recipe.likedBy?.some(id => String(id) === String(user.id))
+        : false
+    )
+
+    setIsSaved(
+      user
+        ? recipe.savedBy?.some(id => String(id) === String(user.id))
+        : false
+    )
+
+    setLikeCount(recipe.likedBy?.length || 0)
+  }, [recipe, user])
+
+  const handleLike = async () => {
+    if (!user) {
+      alert('Please log in to like a recipe.')
+      return
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/recipes/${recipe._id}/like`,
+        {
+          method: 'PATCH',
+          credentials: 'include',
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to update like')
+      }
+
+      setIsLiked(data.liked)
+      setLikeCount(data.likeCount)
+    } catch (error) {
+      console.error('Like error:', error)
+      alert(error.message)
+    }
   }
-  
+
+  const handleSave = async () => {
+    if (!user) {
+      alert('Please log in to save a recipe.')
+      return
+    }
+
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/recipes/${recipe._id}/save`,
+        {
+          method: 'PATCH',
+          credentials: 'include',
+        }
+      )
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to update saved recipe')
+      }
+
+      setIsSaved(data.saved)
+    } catch (error) {
+      console.error('Save error:', error)
+      alert(error.message)
+    }
+  }
+
   return (
     <article className="recipe-card">
       <div className="recipe-image">
-      <img
-    src={
-      !recipe.image
-        ? '/placeholder-recipe.jpg'
-        : recipe.image.startsWith('http')
-          ? recipe.image
-          : 'http://localhost:5000' + recipe.image
-    }
-    alt={recipe.title}
-    loading="lazy"
+        <img
+          src={
+            !recipe.image
+              ? '/placeholder-recipe.jpg'
+              : recipe.image.startsWith('http')
+                ? recipe.image
+                : `http://localhost:5000${recipe.image}`
+          }
+          alt={recipe.title}
+          loading="lazy"
         />
       </div>
 
@@ -40,28 +113,31 @@ function RecipeListCard({ recipe }) {
         <p>By {recipe.author?.username || 'Unknown'}</p>
 
         <div className="recipe-card-footer">
-        <div className="recipe-engagement">
+          <div className="recipe-engagement">
             <button
               type="button"
               className={`interaction-button like-button ${isLiked ? 'active' : ''}`}
               onClick={handleLike}
               aria-pressed={isLiked}
             >
-               <Heart size={18} fill={isLiked ? 'currentColor' : 'none'} />
-                <span>{likeCount}</span>
-                </button>
+              <Heart
+                size={18}
+                fill={isLiked ? 'currentColor' : 'none'}
+              />
+              <span>{likeCount}</span>
+            </button>
 
             <span className="comment-count">
               <MessageCircle size={17} />
-            <span>{recipe.comments || 0}</span> 
+              <span>{recipe.comments || 0}</span>
             </span>
           </div>
 
           <button
             type="button"
             className={`interaction-button save-button ${isSaved ? 'active' : ''}`}
-            onClick={() => setIsSaved((previous) => !previous)}
-            aria-label={isSaved ? 'Unsaved recipe' : 'Save recipe'}
+            onClick={handleSave}
+            aria-label={isSaved ? 'Unsave recipe' : 'Save recipe'}
           >
             <Bookmark
               size={19}
@@ -80,6 +156,7 @@ function RecipeListCard({ recipe }) {
     </article>
   )
 }
+
 
 function Recipes() {
     const [searchQuery, setSearchQuery] = useState('');
