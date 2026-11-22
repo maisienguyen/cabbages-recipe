@@ -7,7 +7,7 @@ import Recipes from './pages/recipes.jsx'
 import Navbar from './components/Navbar'
 import { Heart, MessageCircle, Bookmark } from 'lucide-react'
 import './App.css'
-
+import RecipeDetail from './pages/recipeDetail.jsx'
 
 const categories = [
   { name: 'Breakfast', count: 8 },
@@ -293,6 +293,7 @@ const latestRecipes = [...recipes]
       <Route path="/login" element={<UserLogin />} />
       <Route path="/register" element={<UserRegister />} />
       <Route path="/recipes" element={<Recipes />} />
+      <Route path="/recipes/:id" element={<RecipeDetail />} />
     </Routes>
     </>
   )

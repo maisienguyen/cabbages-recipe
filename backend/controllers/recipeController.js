@@ -88,8 +88,77 @@ const createRecipe = async (req, res) => {
   }
 }
 
+// Like / Unlike a recipe
+const toggleLike = async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id)
+
+    if (!recipe) {
+      return res.status(404).json({
+        message: 'Recipe not found',
+      })
+    }
+
+    const userId = req.user._id
+
+    const alreadyLiked = recipe.likedBy.some(
+      id => id.toString() === userId.toString()
+    )
+
+    const updatedRecipe = await Recipe.findByIdAndUpdate(
+      req.params.id,
+      alreadyLiked
+        ? { $pull: { likedBy: userId } }
+        : { $addToSet: { likedBy: userId } },
+      { new: true }
+    )
+
+    res.status(200).json({
+      liked: !alreadyLiked,
+      likeCount: updatedRecipe.likedBy.length,
+    })
+  } catch (error) {
+    console.error('Toggle like error:', error)
+    res.status(500).json({
+      message: error.message,
+    })
+  }
+}
+
+// Save / Unsave a recipe
+const toggleSave = async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id)
+
+    if (!recipe) {
+      return res.status(404).json({ message: 'Recipe not found' })
+    }
+
+    const userId = req.user._id
+    const alreadySaved = recipe.savedBy.some(
+      id => id.toString() === userId.toString()
+    )
+
+    if (alreadySaved) {
+      recipe.savedBy.pull(userId)
+    } else {
+      recipe.savedBy.push(userId)
+    }
+
+    await recipe.save()
+
+    res.status(200).json({
+      saved: !alreadySaved,
+    })
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
 module.exports = {
   getRecipes,
   getRecipeById,
   createRecipe,
+  toggleLike,
+  toggleSave,
 }
