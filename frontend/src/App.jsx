@@ -10,12 +10,12 @@ import RecipeDetail from './pages/recipeDetail.jsx'
 import RecipeCard from './components/RecipeCard.jsx'
 
 const categories = [
-  { name: 'Breakfast', count: 8 },
-  { name: 'Snack', count: 3 },
-  { name: 'Lunch', count: 5 },
-  { name: 'Dinner', count: 6 },
-  { name: 'Dessert', count: 2 },
-  { name: 'Drinks', count: 2 },
+  'Breakfast',
+  'Snack',
+  'Lunch',
+  'Dinner',
+  'Dessert',
+  'Drinks',
 ]
 
 function App() {
@@ -24,9 +24,12 @@ const [loadingRecipes, setLoadingRecipes] = useState(true)
 const [recipesError, setRecipesError] = useState('')
 
 useEffect(() => {
+  console.log('App useEffect is running')
   const fetchRecipes = async () => {
     try {
+      console.log('Fetching recipes...')
       const response = await fetch('http://localhost:5000/api/recipes')
+      console.log('Response status:', response.status)
 
       if (!response.ok) {
         throw new Error('Failed to fetch recipes')
@@ -108,20 +111,26 @@ const latestRecipes = [...recipes]
           </div>
 
           <div className="category-grid">
-            {categories.map((category) => (
-              <Link
-                to={`/recipes?category=${encodeURIComponent(category.name)}`}
-                className="category-card"
-                key={category.name}
-              >
-                <div>
-                  <h3>{category.name}</h3>
-                  <p>{category.count} recipes</p>
+            {categories.map((category) => {
+              const count = recipes.filter(
+                (recipe) => recipe.category === category
+              ).length
+
+              return (
+               <Link
+                 to={`/recipes?category=${encodeURIComponent(category)}`}
+                 className="category-card"
+                 key={category}
+               >
+               <div>
+                <h3>{category}</h3>
+                <p>{count} {count === 1 ? 'recipe' : 'recipes'}</p>
                 </div>
 
                 <span>→</span>
-              </Link>
-            ))}
+                 </Link>
+              )
+            })}
           </div>
         </section>
 

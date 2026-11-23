@@ -1,17 +1,47 @@
 import { Link } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Heart, MessageCircle, Bookmark } from 'lucide-react'
+import { useAuth } from '../context/authContext'
+import handleLike from '../utils/handleLike'
+import handleBookmark from '../utils/handleBookmark'
+import getCommentCount from '../utils/getCommentCount'
 
 function RecipeCard({ recipe, rank, latest = false }) {
+	const { user, loading: authLoading } = useAuth()
   const [isLiked, setIsLiked] = useState(false)
   const [isSaved, setIsSaved] = useState(false)
   const [likeCount, setLikeCount] = useState(recipe.likedBy?.length || 0)
-  const handleLike = () => {
-		const nextLiked = !isLiked
+	const [commentCount, setCommentCount] = useState(0)
 
-		setIsLiked(nextLiked)
-		setLikeCount((count) => count + (nextLiked ? 1 : -1))
-	}
+ // Sync Like and Save with logged-in user
+  useEffect(() => {
+    if (!recipe || authLoading) return
+
+    setIsLiked(
+      user
+        ? recipe.likedBy?.some(
+            item => String(item?._id || item) === String(user.id)
+          )
+        : false
+    )
+
+    setIsSaved(
+      user
+        ? recipe.savedBy?.some(
+            item => String(item?._id || item) === String(user.id)
+          )
+        : false
+    )
+
+		const fetchCommentCount = async () => {
+			const count = await getCommentCount(recipe._id);
+			setCommentCount(String(count));
+		};
+
+		if (recipe?._id) {
+			fetchCommentCount();
+		}
+  }, [recipe, user, authLoading])
 
   return (
     <article className="recipe-card">
@@ -53,7 +83,7 @@ function RecipeCard({ recipe, rank, latest = false }) {
 						<button
 							type="button"
 							className={`interaction-button like-button ${isLiked ? 'active' : ''}`}
-							onClick={handleLike}
+							onClick={() => handleLike({ user, id: recipe._id, setIsLiked, setLikeCount })}
 							aria-label={isLiked ? 'Unlike recipe' : 'Like recipe'}
 							aria-pressed={isLiked}
 						>
@@ -67,14 +97,14 @@ function RecipeCard({ recipe, rank, latest = false }) {
 
 						<span className="comment-count">
 							<MessageCircle size={18} strokeWidth={1.8} />
-							<span>{recipe.comments}</span>
+							<span>{commentCount}</span>
 						</span>
 					</div>
 
 					<button
 						type="button"
 						className={`interaction-button save-button ${isSaved ? 'active' : ''}`}
-						onClick={() => setIsSaved((previous) => !previous)}
+						onClick={() => handleBookmark({ user, id: recipe._id, setIsSaved })}
 						aria-label={isSaved ? 'Remove from saved recipes' : 'Save recipe'}
 						aria-pressed={isSaved}
 					>

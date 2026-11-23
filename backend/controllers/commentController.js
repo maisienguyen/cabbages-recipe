@@ -15,6 +15,19 @@ const getComments = async (req, res) => {
   }
 }
 
+// Get comment count
+const getCommentCount = async (req, res) => {
+  try {
+    const commentCount = await Comment.countDocuments({
+      recipe: req.params.recipeId,
+    })
+
+    res.status(200).json({ commentCount })
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
 // Create a comment
 const createComment = async (req, res) => {
   try {
@@ -45,5 +58,6 @@ const createComment = async (req, res) => {
 
 module.exports = {
   getComments,
+  getCommentCount,
   createComment,
 }

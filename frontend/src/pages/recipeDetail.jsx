@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { Heart, Bookmark } from 'lucide-react'
 import { useAuth } from '../context/authContext'
+import handleLike from '../utils/handleLike'
+import handleBookmark from '../utils/handleBookmark'
 
 function RecipeDetail() {
   const { id } = useParams()
@@ -98,83 +100,6 @@ function RecipeDetail() {
 
     fetchComments()
   }, [id])
-
-  // Like / Unlike
-  const handleLike = async () => {
-    if (!user) {
-      alert('Please log in to like this recipe.')
-      return
-    }
-
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/recipes/${id}/like`,
-        {
-          method: 'PATCH',
-          credentials: 'include',
-        }
-      )
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to update like')
-      }
-
-      setIsLiked(data.liked)
-      setLikeCount(data.likeCount)
-
-      setRecipe(previous => ({
-        ...previous,
-        likedBy: data.liked
-          ? [...(previous.likedBy || []), user.id]
-          : (previous.likedBy || []).filter(
-              item => String(item?._id || item) !== String(user.id)
-            ),
-      }))
-    } catch (error) {
-      console.error('Like error:', error)
-      alert(error.message)
-    }
-  }
-
-  // Save / Unsave
-  const handleSave = async () => {
-    if (!user) {
-      alert('Please log in to save this recipe.')
-      return
-    }
-
-    try {
-      const response = await fetch(
-        `http://localhost:5000/api/recipes/${id}/save`,
-        {
-          method: 'PATCH',
-          credentials: 'include',
-        }
-      )
-
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to update saved recipe')
-      }
-
-      setIsSaved(data.saved)
-
-      setRecipe(previous => ({
-        ...previous,
-        savedBy: data.saved
-          ? [...(previous.savedBy || []), user.id]
-          : (previous.savedBy || []).filter(
-              item => String(item?._id || item) !== String(user.id)
-            ),
-      }))
-    } catch (error) {
-      console.error('Save error:', error)
-      alert(error.message)
-    }
-  }
 
   // Post comment
   const handlePostComment = async (event) => {
@@ -363,7 +288,7 @@ function RecipeDetail() {
               <button
                 type="button"
                 className={`engagement-btn ${isLiked ? 'liked' : ''}`}
-                onClick={handleLike}
+                onClick={() => handleLike({ user, id, setIsLiked, setLikeCount, setRecipe })}
                 aria-pressed={isLiked}
               >
                 <Heart
@@ -376,7 +301,7 @@ function RecipeDetail() {
               <button
                 type="button"
                 className={`engagement-btn ${isSaved ? 'saved' : ''}`}
-                onClick={handleSave}
+                onClick={() => handleBookmark({ user, id, setIsSaved, setRecipe })}
                 aria-pressed={isSaved}
               >
                 <Bookmark

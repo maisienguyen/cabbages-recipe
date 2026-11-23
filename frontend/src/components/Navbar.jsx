@@ -10,7 +10,12 @@ function Navbar() {
   return (
     <header className="navbar">
       <Link className="brand" to="/">
-        Cabbages Recipe
+      <img 
+        src="/favicon.svg"
+        alt="cabbages recipe"
+        className="brand-logo"
+        />
+        <span>cabbages recipe</span>
       </Link>
 
       <nav className="nav-links">
