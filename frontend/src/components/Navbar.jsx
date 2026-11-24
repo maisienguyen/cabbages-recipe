@@ -1,11 +1,44 @@
 import { Link, NavLink } from 'react-router-dom'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '../context/authContext'
-import { UserRound, BookOpen, LogOut } from 'lucide-react'
+import { UserRound, BookOpen, LogOut, Bell } from 'lucide-react'
 
 function Navbar() {
   const { user, logout } = useAuth()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [notifications, setNotifications] = useState([])
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false)
+
+  const unreadCount = notifications.filter(
+  notification => !notification.isRead
+  ).length
+
+  useEffect(() => {
+  if (!user) {
+    setNotifications([])
+    return
+  }
+
+  const fetchNotifications = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:5000/api/notifications',
+        { credentials: 'include' }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch notifications')
+      }
+
+      const data = await response.json()
+      setNotifications(data)
+    } catch (error) {
+      console.error('Notification error:', error)
+    }
+  }
+
+  fetchNotifications()
+}, [user])
 
   return (
     <header className="navbar">
@@ -33,6 +66,79 @@ function Navbar() {
        </nav>
 
       <div className="nav-user">
+      <div className="notification-wrapper">
+  <button
+    type="button"
+    className="notification-button"
+    aria-label="Notifications"
+    onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+  >
+    <Bell size={20} />
+
+    {unreadCount > 0 && (
+      <span className="notification-dot">
+        {unreadCount > 9 ? '9+' : unreadCount}
+      </span>
+    )}
+  </button>
+
+  {isNotificationOpen && (
+    <div className="notification-dropdown">
+      <h3>Notifications</h3>
+
+      {notifications.length === 0 ? (
+        <p>No notifications yet.</p>
+      ) : (
+        notifications.map(notification => (
+          <div
+            key={notification._id}
+            className={`notification-item ${
+              notification.isRead ? 'read' : 'unread'
+            }`}
+          >
+            <p>{notification.message}</p>
+            <small>
+              {new Date(notification.createdAt).toLocaleString()}
+            </small>
+
+            {!notification.isRead && (
+              <button
+                type="button"
+                onClick={async () => {
+                  try {
+                    const response = await fetch(
+                      `http://localhost:5000/api/notifications/${notification._id}/read`,
+                      {
+                        method: 'PATCH',
+                        credentials: 'include',
+                      }
+                    )
+
+                    if (!response.ok) {
+                      throw new Error('Failed to mark notification as read')
+                    }
+
+                    setNotifications(prev =>
+                      prev.map(item =>
+                        item._id === notification._id
+                          ? { ...item, isRead: true }
+                          : item
+                      )
+                    )
+                  } catch (error) {
+                    console.error(error)
+                  }
+                }}
+              >
+                Mark as read
+              </button>
+            )}
+          </div>
+        ))
+      )}
+    </div>
+  )}
+</div>
         {user ? (
           <>
             <button

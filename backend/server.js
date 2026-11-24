@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
 const recipeRoutes = require('./routes/recipeRoutes')
 const commentRoutes = require('./routes/commentRoutes')
+const notificationRoutes = require('./routes/notificationRoutes')
 
 dotenv.config();
 
@@ -48,5 +49,6 @@ app.use("/api/users", (req, res, next) => {
 }, require("./routes/userRoutes"));
 app.use('/api/recipes', recipeRoutes)
 app.use('/api/comments', commentRoutes)
+app.use('/api/notifications', notificationRoutes)
 app.listen(process.env.PORT, () => console.log(`Server running on port ${process.env.PORT}`));
 
