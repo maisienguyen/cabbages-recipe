@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Heart, Bookmark, MessageCircle } from 'lucide-react'
 import { useAuth } from '../context/authContext'
-
+import './Recipes.css'
 
 function RecipeListCard({ recipe }) {
   const { user } = useAuth()

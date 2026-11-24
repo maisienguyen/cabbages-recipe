@@ -8,7 +8,7 @@ import Navbar from './components/Navbar'
 import './App.css'
 import RecipeDetail from './pages/recipeDetail.jsx'
 import RecipeCard from './components/RecipeCard.jsx'
-
+import UserProfile from './pages/userProfile.jsx'
 const categories = [
   'Breakfast',
   'Snack',
@@ -210,6 +210,7 @@ const latestRecipes = [...recipes]
       <Route path="/register" element={<UserRegister />} />
       <Route path="/recipes" element={<Recipes />} />
       <Route path="/recipes/:id" element={<RecipeDetail />} />
+      <Route path="/user" element={<UserProfile />} />
     </Routes>
     </>
   )

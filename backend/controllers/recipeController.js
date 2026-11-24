@@ -27,8 +27,24 @@ const getRecipes = async (req, res) => {
   }
 }
 
-// GET /api/recipes/:id
-// Get one recipe by ID
+// Get recipes created by the logged-in user
+const getMyRecipes = async (req, res) => {
+  try {
+    const recipes = await Recipe.find({
+      author: req.user._id,
+    })
+      .populate('author', 'username')
+      .sort({ createdAt: -1 })
+
+    res.status(200).json(recipes)
+  } catch (error) {
+    res.status(500).json({
+      message: 'Failed to retrieve your recipes',
+      error: error.message,
+    })
+  }
+}
+// Get recipe by ID
 const getRecipeById = async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id)
@@ -83,6 +99,64 @@ const createRecipe = async (req, res) => {
   } catch (error) {
     res.status(400).json({
       message: 'Failed to create recipe',
+      error: error.message,
+    })
+  }
+}
+
+// Update an existing recipe
+const updateRecipe = async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id)
+
+    if (!recipe) {
+      return res.status(404).json({
+        message: 'Recipe not found',
+      })
+    }
+
+    if (recipe.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: 'Not authorized to update this recipe',
+      })
+    }
+
+    const {
+      title,
+      description,
+      category,
+      ingredients,
+      instructions,
+      cookingTime,
+      servings,
+      image,
+      isDraft,
+    } = req.body
+
+    recipe.title = title
+    recipe.description = description
+    recipe.category = category
+    recipe.ingredients = ingredients
+    recipe.instructions = instructions
+    recipe.cookingTime = cookingTime
+    recipe.servings = servings
+
+    if (req.file) {
+      recipe.image = `/uploads/${req.file.filename}`
+    } else if (image !== undefined) {
+      recipe.image = image
+    }
+
+    if (isDraft !== undefined) {
+      recipe.isDraft = isDraft === 'true' || isDraft === true
+    }
+
+    await recipe.save()
+
+    res.status(200).json(recipe)
+  } catch (error) {
+    res.status(400).json({
+      message: 'Failed to update recipe',
       error: error.message,
     })
   }
@@ -157,8 +231,10 @@ const toggleSave = async (req, res) => {
 
 module.exports = {
   getRecipes,
+  getMyRecipes,
   getRecipeById,
   createRecipe,
+  updateRecipe,
   toggleLike,
   toggleSave,
 }
