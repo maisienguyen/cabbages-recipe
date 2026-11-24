@@ -5,6 +5,7 @@ import { Heart, Bookmark } from 'lucide-react'
 import { useAuth } from '../context/authContext'
 import handleLike from '../utils/handleLike'
 import handleBookmark from '../utils/handleBookmark'
+import './RecipeDetail.css'
 
 function RecipeDetail() {
   const { id } = useParams()

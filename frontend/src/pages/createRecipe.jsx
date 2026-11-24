@@ -1,10 +1,15 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import { Link } from 'react-router-dom'
 import './createRecipe.css'
 import { useAuth } from '../context/authContext'
 
-function CreateRecipe() {
+function CreateRecipe({ embedded = false, recipeId = null, onSaved }) {
   const { user } = useAuth()
+  const { id: routeId } = useParams()
+
+  const id = recipeId || routeId
+  const isEditing = Boolean(id)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -16,8 +21,63 @@ function CreateRecipe() {
     instructions: '',
     image: '',
   })
+const [isDraft, setIsDraft] = useState(false)
 const [imageFile, setImageFile] = useState(null)
 const [imagePreview, setImagePreview] = useState('')
+
+useEffect(() => {
+  if (!isEditing) {
+    setFormData({
+      title: '',
+      description: '',
+      category: 'Breakfast',
+      prepTime: '',
+      cookingTime: '',
+      servings: '2',
+      ingredients: '',
+      instructions: '',
+      image: '',
+    })
+
+    setImageFile(null)
+    setImagePreview('')
+    return
+  }
+
+  const fetchRecipe = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/recipes/${id}`,
+        { credentials: 'include' }
+      )
+
+      const recipe = await response.json()
+
+      if (!response.ok) {
+        throw new Error(recipe.message || 'Failed to load recipe')
+      }
+
+      setFormData({
+        title: recipe.title || '',
+        description: recipe.description || '',
+        category: recipe.category || 'Breakfast',
+        prepTime: '',
+        cookingTime: recipe.cookingTime || '',
+        servings: recipe.servings || '2',
+        ingredients: (recipe.ingredients || []).join('\n'),
+        instructions: (recipe.instructions || []).join('\n'),
+        image: recipe.image || '',
+      })
+
+      setImagePreview(recipe.image || '')
+    } catch (error) {
+      console.error('Error loading recipe:', error)
+      alert(error.message)
+    }
+  }
+
+  fetchRecipe()
+}, [id, isEditing])
 
 const handleChange = (e) => {
     const { name, value } = e.target
@@ -74,78 +134,94 @@ const handleRemoveImage = () => {
   }
 }
 
-  const handleSubmit = async(e) => {
-    if (!user) {
-  alert('Please log in before publishing a recipe.')
-  return
-}
-    e.preventDefault()
-   
-    try {
-      const data = new FormData()
+  const handleSubmit = async (e) => {
+  e.preventDefault()
 
-      data.append('title', formData.title)
-      data.append('description', formData.description)
-      data.append('category', formData.category)
-      data.append('prepTime', formData.prepTime)
-      data.append('cookingTime', formData.cookingTime)
-      data.append('servings', formData.servings)
-
-      formData.ingredients
-        .split('\n')
-        .filter((item) => item.trim() !== '')
-        .forEach((item) => data.append('ingredients', item.trim()))
-
-      formData.instructions
-        .split('\n')
-        .filter((item) => item.trim() !== '')
-        .forEach((item) => data.append('instructions', item.trim()))
-
-      if (imageFile) {
-        data.append('image', imageFile)
-      } else if (formData.image) {
-        data.append('image', formData.image)
-      }
-
-      const response = await fetch('http://localhost:5000/api/recipes', {
-        method: 'POST',
-        credentials: 'include',
-        body: data,
-      })
-
-      const result = await response.json()
-
-      if (!response.ok) {
-        throw new Error(result.message || 'Failed to create recipe')
-      }
-
-      alert('Recipe created successfully!')
-      console.log('Recipe created:', result)
-
-    } catch (error) {
-      console.error('Error creating recipe:', error)
-      alert('Error creating recipe: ' + error.message)
-    }
+  if (!user) {
+    alert('Please log in before publishing a recipe.')
+    return
   }
 
+  try {
+    const data = new FormData()
+
+    data.append('title', formData.title)
+    data.append('description', formData.description)
+    data.append('category', formData.category)
+    data.append('cookingTime', formData.cookingTime)
+    data.append('servings', formData.servings)
+    data.append('isDraft', String(isDraft))
+
+    formData.ingredients
+      .split('\n')
+      .filter(item => item.trim() !== '')
+      .forEach(item => data.append('ingredients', item.trim()))
+
+    formData.instructions
+      .split('\n')
+      .filter(item => item.trim() !== '')
+      .forEach(item => data.append('instructions', item.trim()))
+
+    if (imageFile) {
+      data.append('image', imageFile)
+    } else if (formData.image) {
+      data.append('image', formData.image)
+    }
+
+    const response = await fetch(
+      isEditing
+        ? `http://localhost:5000/api/recipes/${id}`
+        : 'http://localhost:5000/api/recipes',
+      {
+        method: isEditing ? 'PUT' : 'POST',
+        credentials: 'include',
+        body: data,
+      }
+    )
+
+    const result = await response.json()
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Failed to save recipe')
+    }
+
+    alert(isEditing
+      ? 'Recipe updated successfully!'
+      : 'Recipe created successfully!'
+    )
+
+    if (onSaved) {
+  onSaved()
+}
+
+  } catch (error) {
+    console.error('Error saving recipe:', error)
+    alert('Error: ' + error.message)
+  }
+}
+
   return (
-    <main className="create-recipe-page">
-      <div className="create-recipe-container">
-        <div className="create-recipe-breadcrumb">
-          <Link to="/">Home</Link>
-          <span>/</span>
-          <span>Create recipe</span>
-        </div>
-
-        <div className="create-recipe-heading">
-          <p className="create-recipe-label">SHARE YOUR CREATION</p>
-          <h1>Create a recipe</h1>
-          <p>
-            Share your favorite homemade dishes with the Cabbages Recipe
-            community.
-          </p>
-        </div>
-
+  <main className={embedded ? 'profile-editor-form' : 'create-recipe-page'}>
+    <div className={embedded ? 'profile-editor-container' : 'create-recipe-container'}>
+      {!embedded && (
+  <div className="create-recipe-breadcrumb">
+    <Link to="/">Home</Link>
+    <span>/</span>
+    <span>{isEditing ? 'Edit recipe' : 'Create recipe'}</span>
+  </div>
+)}
+  {!embedded && (
+  <div className="create-recipe-heading">
+  <p className="create-recipe-label">
+     {isEditing ? 'UPDATE YOUR CREATION' : 'SHARE YOUR CREATION'}
+     </p>
+     <h1>{isEditing ? 'Edit your recipe' : 'Create a recipe'}</h1>
+    <p>
+     Share your favorite homemade dishes with the Cabbages Recipe
+    community.
+    </p>
+    </div>
+)}
         <form className="create-recipe-form" onSubmit={handleSubmit}>
           <section className="form-section">
             <h2>Recipe information</h2>
@@ -320,14 +396,30 @@ const handleRemoveImage = () => {
           </section>
 
           <div className="create-recipe-actions">
-            <Link to="/" className="cancel-recipe-button">
-              Cancel
-            </Link>
+  {!embedded && (
+    <Link to="/" className="cancel-recipe-button">
+      Cancel
+    </Link>
+  )}
 
-            <button type="submit" className="publish-recipe-button">
-              Publish recipe
-            </button>
-          </div>
+  <button
+    type="submit"
+    className="publish-recipe-button"
+    onClick={() => setIsDraft(false)}
+    name="publish"
+  >
+    Publish
+  </button>
+
+  <button
+    type="submit"
+    className="draft-recipe-button"
+    onClick={() => setIsDraft(true)}
+    name="draft"
+  >
+    Save as Draft
+  </button>
+</div>
         </form>
       </div>
     </main>
