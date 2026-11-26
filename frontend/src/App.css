@@ -1567,7 +1567,6 @@ input:focus-visible {
   margin: 0;
 }
 
-<<<<<<< HEAD
 .ingredients-list li {
   list-style: none;
 }
@@ -1694,16 +1693,6 @@ input:focus-visible {
   margin: 0 0 20px;
   font-size: 22px;
 }
-=======
-.profile-editor .create-recipe-form {
-  width: 100%;
-  max-width: 100%;
-  padding: 18px;
-  box-shadow: none;
-}
-
-/* Responsive layout */
->>>>>>> user-profile-feature
 
 @media (max-width: 900px) {
   .profile-workspace {
