@@ -1700,7 +1700,6 @@ input:focus-visible {
   }
 }
 
-<<<<<<< HEAD
 .profile-post-card {
   overflow: hidden;
   margin-bottom: 24px;
@@ -1761,68 +1760,3 @@ input:focus-visible {
   text-decoration: none;
   cursor: pointer;
 }
-=======
-@media (max-width: 600px) {
-  .profile-recipe-image {
-    width: 110px;
-    height: 100px;
-    flex-basis: 110px;
-  }
-
-  .profile-recipe-info {
-    padding: 12px;
-  }
-}
-
-
-/* My recipe card - horizontal layout */
-
-.profile-recipe-card {
-  display: flex;
-  flex-direction: row;
-  align-items: flex-start;
-  gap: 18px;
-  padding: 16px;
-  margin-bottom: 18px;
-  background: #fff;
-  border: 1px solid #e8e6dc;
-  border-radius: 12px;
-  overflow: hidden;
-}
-
-.profile-recipe-card .profile-recipe-image {
-  display: block;
-  width: 150px;
-  height: 130px;
-  flex: 0 0 150px;
-  object-fit: cover;
-  border-radius: 9px;
-}
-
-.profile-recipe-card .profile-recipe-info {
-  flex: 1;
-  min-width: 0;
-  padding: 0;
-}
-
-.profile-recipe-card .profile-recipe-info h3 {
-  margin: 0 0 8px;
-  font-size: 18px;
-}
-
-.profile-recipe-card .profile-recipe-actions {
-  margin-top: 14px;
-}
-
-@media (max-width: 600px) {
-  .profile-recipe-card {
-    flex-direction: column;
-  }
-
-  .profile-recipe-card .profile-recipe-image {
-    width: 100%;
-    height: 180px;
-    flex-basis: auto;
-  }
-}
->>>>>>> user-profile-feature
