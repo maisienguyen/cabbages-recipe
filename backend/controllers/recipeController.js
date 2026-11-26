@@ -45,7 +45,25 @@ const getMyRecipes = async (req, res) => {
     })
   }
 }
-// GET /api/recipes/:id
+// Get recipes saved by the logged-in user
+const getSavedRecipes = async (req, res) => {
+  try {
+    const recipes = await Recipe.find({
+      savedBy: req.user._id,
+      isDraft: false,
+    })
+      .populate('author', 'username')
+      .sort({ createdAt: -1 })
+
+    res.status(200).json(recipes)
+  } catch (error) {
+    res.status(500).json({
+      message: 'Failed to retrieve saved recipes',
+      error: error.message,
+    })
+  }
+}
+
 // Get one recipe by ID
 const getRecipeById = async (req, res) => {
   try {
@@ -273,6 +291,7 @@ const toggleSave = async (req, res) => {
 module.exports = {
   getRecipes,
   getMyRecipes,
+  getSavedRecipes,
   getRecipeById,
   createRecipe,
   updateRecipe,

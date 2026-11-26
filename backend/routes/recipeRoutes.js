@@ -4,6 +4,7 @@ const router = express.Router()
 const {
   getRecipes,
   getMyRecipes,
+  getSavedRecipes,
   getRecipeById,
   createRecipe,
   updateRecipe,
@@ -18,6 +19,7 @@ const upload = require('../middleware/uploadMiddleware')
 // Public routes
 router.get('/', getRecipes)
 router.get('/my-recipes', protect, getMyRecipes)
+router.get('/saved', protect, getSavedRecipes)
 router.get('/:id', getRecipeById)
 
 // Login required

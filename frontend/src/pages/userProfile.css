@@ -448,21 +448,32 @@
 
 .profile-recipe-actions {
   display: flex;
+  align-items: center;
   flex-wrap: wrap;
   gap: 8px;
   margin-top: 14px;
 }
 
+.profile-recipe-actions a,
 .profile-recipe-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 34px;
   padding: 7px 12px;
   border: 1px solid #deded2;
   border-radius: 7px;
   background: #fff;
+  border-color: #deded2;
   color: #526b45;
+  font-family: inherit;
   font-size: 12px;
+  text-decoration: none;
   cursor: pointer;
 }
 
+.profile-recipe-actions a:hover,
 .profile-recipe-actions button:hover {
   background: #edf1e3;
 }
@@ -472,6 +483,17 @@
   padding: 12px;
   border-radius: 9px;
   background: #faf9f6;
+}
+
+.profile-recipe-actions button:first-child {
+  background: #a9bd72;
+  border-color: #a9bd72;
+  color: #26351f;
+}
+
+.profile-recipe-actions button:first-child:hover {
+  background: #96ad60;
+  border-color: #96ad60;
 }
 
 /*RECIPE EDITOR*/
@@ -863,4 +885,15 @@
 .remove-avatar-button:hover {
   background: #f8dddd;
   border-color: #d99a9a;
+}
+
+.profile-recipe-actions a {
+  background: #a9bd72;
+  border-color: #a9bd72;
+  color: #26351f;
+}
+
+.profile-recipe-actions a:hover {
+  background: #96ad60;
+  border-color: #96ad60;
 }

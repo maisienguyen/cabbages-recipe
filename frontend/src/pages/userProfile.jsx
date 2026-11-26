@@ -9,6 +9,8 @@ function UserProfile() {
 
   const [recipes, setRecipes] = useState([])
   const [moreRecipes, setMoreRecipes] = useState([])
+  const [savedRecipes, setSavedRecipes] = useState([])
+
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [refreshKey, setRefreshKey] = useState(0)
@@ -171,6 +173,33 @@ const handleUpdateProfile = async (e) => {
     }
   }
 
+  // Unsave recipe
+const handleUnsave = async (recipeId) => {
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/recipes/${recipeId}/save`,
+      {
+        method: 'PATCH',
+        credentials: 'include',
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error('Failed to unsave recipe')
+    }
+
+    const result = await response.json()
+
+    if (!result.saved) {
+      setSavedRecipes(prev =>
+        prev.filter(recipe => recipe._id !== recipeId)
+      )
+    }
+  } catch (error) {
+    console.error('Unsave recipe error:', error)
+  }
+}
+
   // Fetch comments
   const fetchComments = async (recipeId) => {
     try {
@@ -268,6 +297,30 @@ const handleUpdateProfile = async (e) => {
 
     fetchMyRecipes()
   }, [user, refreshKey])
+  // Fetch saved recipes
+useEffect(() => {
+  if (!user) return
+
+  const fetchSavedRecipes = async () => {
+    try {
+      const response = await fetch(
+        'http://localhost:5000/api/recipes/saved',
+        { credentials: 'include' }
+      )
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch saved recipes')
+      }
+
+      const data = await response.json()
+      setSavedRecipes(data)
+    } catch (error) {
+      console.error('Fetch saved recipes error:', error)
+    }
+  }
+
+  fetchSavedRecipes()
+}, [user, refreshKey])
 
   // Fetch other users' recipes
   useEffect(() => {
@@ -332,7 +385,7 @@ const handleUpdateProfile = async (e) => {
   const tabs = [
     `My recipes (${publishedRecipes.length})`,
     `Drafts (${draftRecipes.length})`,
-    'Saved recipes',
+    `Saved recipes (${savedRecipes.length})`,,
     'Activity',
   ]
 
@@ -752,9 +805,48 @@ const handleUpdateProfile = async (e) => {
     )}
 
     {/* Saved recipes tab */}
-    {activeTab === 'Saved recipes' && (
-    <p>Saved recipes will be displayed here.</p>
+{activeTab === 'Saved recipes' && (
+  <div className="profile-recipes-list">
+    {savedRecipes.length > 0 ? (
+      savedRecipes.map(recipe => (
+        <article
+          className="profile-recipe-card"
+          key={recipe._id}
+        >
+          {recipe.image && (
+            <img
+              src={recipe.image}
+              alt={recipe.title}
+              className="profile-recipe-image"
+            />
+          )}
+
+          <div className="profile-recipe-info">
+            <h3>{recipe.title}</h3>
+            <p>{recipe.description}</p>
+            <p>
+              {recipe.category} · {recipe.cookingTime} min
+            </p>
+
+            <div className="profile-recipe-actions">
+              <Link to={`/recipes/${recipe._id}`}>
+                View Recipe
+              </Link>
+              <button
+                type="button"
+                onClick={() => handleUnsave(recipe._id)}
+              >
+                Unsave
+             </button>
+            </div>
+          </div>
+        </article>
+      ))
+    ) : (
+      <p>You haven't saved any recipes yet.</p>
     )}
+  </div>
+)}
 </>
     )}
 
