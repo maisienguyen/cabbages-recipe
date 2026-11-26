@@ -35,7 +35,7 @@ function RecipeDetail() {
         setLoading(true)
 
         const response = await fetch(
-          `http://localhost:5000/api/recipes/${id}`
+          `/api/recipes/${id}`
         )
 
         if (!response.ok) {
@@ -84,7 +84,7 @@ function RecipeDetail() {
         setCommentError('')
 
         const response = await fetch(
-          `http://localhost:5000/api/comments/${id}`
+          `/api/comments/${id}`
         )
 
         if (!response.ok) {
@@ -118,7 +118,7 @@ function RecipeDetail() {
       setPostingComment(true)
 
       const response = await fetch(
-        `http://localhost:5000/api/comments/${id}`,
+        `/api/comments/${id}`,
         {
           method: 'POST',
           credentials: 'include',
@@ -154,7 +154,7 @@ const handleEditComment = async (commentId) => {
 
   try {
     const response = await fetch(
-      `http://localhost:5000/api/comments/${commentId}`,
+      `/api/comments/${commentId}`,
       {
         method: 'PUT',
         credentials: 'include',
@@ -196,7 +196,7 @@ const handleDeleteComment = async (commentId) => {
 
   try {
     const response = await fetch(
-      `http://localhost:5000/api/comments/${commentId}`,
+      `/api/comments/${commentId}`,
       {
         method: 'DELETE',
         credentials: 'include',
@@ -260,7 +260,7 @@ const handleDeleteComment = async (commentId) => {
                 ? '/placeholder-recipe.jpg'
                 : recipe.image.startsWith('http')
                   ? recipe.image
-                  : `http://localhost:5000${recipe.image}`
+                  : recipe.image
             }
             alt={recipe.title}
           />

@@ -52,7 +52,7 @@ function RecipeCard({ recipe, rank, latest = false }) {
       			? '/placeholder-recipe.jpg'
       			: recipe.image.startsWith('http')
         		? recipe.image
-        		: `http://localhost:5000${recipe.image}`
+        		: recipe.image
   				}
   				alt={recipe.title}
   				loading="lazy"

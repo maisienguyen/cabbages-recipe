@@ -37,7 +37,7 @@ function RecipeListCard({ recipe }) {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/recipes/${recipe._id}/like`,
+        `/api/recipes/${recipe._id}/like`,
         {
           method: 'PATCH',
           credentials: 'include',
@@ -66,7 +66,7 @@ function RecipeListCard({ recipe }) {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/recipes/${recipe._id}/save`,
+        `/api/recipes/${recipe._id}/save`,
         {
           method: 'PATCH',
           credentials: 'include',
@@ -95,7 +95,7 @@ function RecipeListCard({ recipe }) {
               ? '/placeholder-recipe.jpg'
               : recipe.image.startsWith('http')
                 ? recipe.image
-                : `http://localhost:5000${recipe.image}`
+                : recipe.image
           }
           alt={recipe.title}
           loading="lazy"
@@ -170,7 +170,7 @@ function Recipes() {
     useEffect(() => {
   const fetchRecipes = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/recipes')
+      const response = await fetch('/api/recipes')
 
       if (!response.ok) {
         throw new Error('Failed to fetch recipes')

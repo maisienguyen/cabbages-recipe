@@ -6,7 +6,7 @@ const handleLike = async ({ user, id, setIsLiked, setLikeCount, setRecipe }) => 
 
 	try {
 		const response = await fetch(
-			`http://localhost:5000/api/recipes/${id}/like`,
+			`/api/recipes/${id}/like`,
 			{
 				method: 'PATCH',
 				credentials: 'include',

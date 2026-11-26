@@ -46,7 +46,7 @@ const handleUpdateProfile = async (e) => {
       formData.append('avatar', selectedAvatarFile)
 
       const avatarResponse = await fetch(
-        'http://localhost:5000/api/users/profile/avatar',
+        '/api/users/profile/avatar',
         {
           method: 'POST',
           credentials: 'include',
@@ -65,7 +65,7 @@ const handleUpdateProfile = async (e) => {
 
     // Update username and email
     const profileResponse = await fetch(
-      'http://localhost:5000/api/users/profile',
+      '/api/users/profile',
       {
         method: 'PUT',
         credentials: 'include',
@@ -89,7 +89,7 @@ const handleUpdateProfile = async (e) => {
     // Change password only when password fields are filled
     if (currentPassword || newPassword || confirmPassword) {
       const passwordResponse = await fetch(
-        'http://localhost:5000/api/users/change-password',
+        '/api/users/change-password',
         {
           method: 'PUT',
           credentials: 'include',
@@ -141,7 +141,7 @@ const handleUpdateProfile = async (e) => {
   const handleLike = async (recipeId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/recipes/${recipeId}/like`,
+        `/api/recipes/${recipeId}/like`,
         {
           method: 'PATCH',
           credentials: 'include',
@@ -177,7 +177,7 @@ const handleUpdateProfile = async (e) => {
 const handleUnsave = async (recipeId) => {
   try {
     const response = await fetch(
-      `http://localhost:5000/api/recipes/${recipeId}/save`,
+      `/api/recipes/${recipeId}/save`,
       {
         method: 'PATCH',
         credentials: 'include',
@@ -204,7 +204,7 @@ const handleUnsave = async (recipeId) => {
   const fetchComments = async (recipeId) => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/comments/${recipeId}`
+        `/api/comments/${recipeId}`
       )
 
       if (!response.ok) {
@@ -246,7 +246,7 @@ const handleUnsave = async (recipeId) => {
 
     try {
       const response = await fetch(
-        `http://localhost:5000/api/recipes/${recipeId}`,
+        `/api/recipes/${recipeId}`,
         {
           method: 'DELETE',
           credentials: 'include',
@@ -277,7 +277,7 @@ const handleUnsave = async (recipeId) => {
         setLoading(true)
 
         const response = await fetch(
-          'http://localhost:5000/api/recipes/my-recipes',
+          '/api/recipes/my-recipes',
           { credentials: 'include' }
         )
 
@@ -304,7 +304,7 @@ useEffect(() => {
   const fetchSavedRecipes = async () => {
     try {
       const response = await fetch(
-        'http://localhost:5000/api/recipes/saved',
+        '/api/recipes/saved',
         { credentials: 'include' }
       )
 
@@ -327,7 +327,7 @@ useEffect(() => {
     const fetchMoreRecipes = async () => {
       try {
         const response = await fetch(
-          'http://localhost:5000/api/recipes'
+          '/api/recipes'
         )
 
         if (!response.ok) {
@@ -403,7 +403,7 @@ useEffect(() => {
         <div className="profile-avatar">
         {user.avatar ? (
         <img
-        src={`http://localhost:5000${user.avatar}`}
+        src={user.avatar}
         alt="Profile"
         />
         ) : (
@@ -471,7 +471,7 @@ useEffect(() => {
                 avatarPreview.startsWith('blob:') ||
                 avatarPreview.startsWith('http')
                   ? avatarPreview
-                  : `http://localhost:5000${avatarPreview}`
+                  : avatarPreview
               }
               alt="Avatar preview"
             />

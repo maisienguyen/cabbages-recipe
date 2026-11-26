@@ -22,7 +22,7 @@ function Navbar() {
   const fetchNotifications = async () => {
     try {
       const response = await fetch(
-        'http://localhost:5000/api/notifications',
+        '/api/notifications',
         { credentials: 'include' }
       )
 
@@ -107,7 +107,7 @@ function Navbar() {
                 onClick={async () => {
                   try {
                     const response = await fetch(
-                      `http://localhost:5000/api/notifications/${notification._id}/read`,
+                      `/api/notifications/${notification._id}/read`,
                       {
                         method: 'PATCH',
                         credentials: 'include',

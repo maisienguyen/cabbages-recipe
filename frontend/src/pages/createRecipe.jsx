@@ -47,7 +47,7 @@ useEffect(() => {
   const fetchRecipe = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5000/api/recipes/${id}`,
+        `/api/recipes/${id}`,
         { credentials: 'include' }
       )
 
@@ -170,8 +170,8 @@ const handleRemoveImage = () => {
 
     const response = await fetch(
       isEditing
-        ? `http://localhost:5000/api/recipes/${id}`
-        : 'http://localhost:5000/api/recipes',
+        ? `/api/recipes/${id}`
+        : '/api/recipes',
       {
         method: isEditing ? 'PUT' : 'POST',
         credentials: 'include',

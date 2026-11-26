@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
 
     const refreshUser = async () => {
         try {
-            const response = await fetch("http://localhost:5000/api/users/profile", {
+            const response = await fetch("/api/users/profile", {
                 method: "GET",
                 credentials: "include",
             })
@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     }, []);
     const logout = async () => {
         try {
-            const response = await fetch("http://localhost:5000/api/users/logout", {
+            const response = await fetch("/api/users/logout", {
                 method: "POST",
                 credentials: "include",
             })
