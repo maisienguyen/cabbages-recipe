@@ -202,9 +202,9 @@ function Recipes() {
       
       const matchesTime =
         selectedTime === 'all' ||
-        selectedTime === "15-30" && recipe.time >= 15 && recipe.time <= 30 ||
-        selectedTime === "30-60" && recipe.time > 30 && recipe.time <= 60 ||
-        selectedTime === "60+" && recipe.time > 60
+        (selectedTime === "15-30" && recipe.cookingTime >= 15 && recipe.cookingTime <= 30) ||
+        (selectedTime === "30-60" && recipe.cokkingTime > 30 && recipe.cookingTime <= 60) ||
+        (selectedTime === "60+" && recipe.cookingTime > 60)
 
       return matchesSearch && matchesCategory && matchesTime
   

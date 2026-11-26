@@ -339,8 +339,8 @@ input:focus-visible {
   padding: 0 15px;
   border: 1px solid var(--olive);
   border-radius: 9px;
-  background: #526b45;
-  color: white;
+  background: #a9bd72;
+  color: #26351f;
   font-size: 12px;
   font-weight: 700;
   transition: background 0.2s;
@@ -557,10 +557,10 @@ input:focus-visible {
   justify-content: center;
   min-height: 28px;
   padding: 5px 8px;
-  border: 1px solid var(--border);
+  border: 1px solid #a9bd72;
   border-radius: 7px;
-  background: #fff;
-  color: #292929;
+  background: #a9bd72;
+  color: #26351f;
   font-size: 10px;
   font-weight: 600;
   white-space: nowrap;
@@ -595,7 +595,8 @@ input:focus-visible {
 }
 
 .view-button:hover {
-  background: var(--olive-light);
+  background: #96ad60;
+  border-color: #96ad60;
 }
 
 /*LATEST RECIPES*/
@@ -1025,8 +1026,8 @@ input:focus-visible {
   padding: 11px;
   border: none;
   border-radius: 8px;
-  background: #526b45;
-  color: white;
+  background: #a9bd72;
+  color: #26351f;
   font-weight: 600;
 }
 
@@ -1332,10 +1333,10 @@ input:focus-visible {
   min-height: 38px;
   margin-top: 10px;
   padding: 0 12px;
-  border: 1px solid #526b45;
+  border: 1px solid #a9bd72;
   border-radius: 8px;
-  background: #526b45;
-  color: white;
+  background:  #a9bd72;
+  color: #26351f;
   font-size: 12px;
   font-weight: 600;
   text-decoration: none;
