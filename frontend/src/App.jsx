@@ -28,7 +28,7 @@ useEffect(() => {
   const fetchRecipes = async () => {
     try {
       console.log('Fetching recipes...')
-      const response = await fetch('http://localhost:5000/api/recipes')
+      const response = await fetch('/api/recipes')
       console.log('Response status:', response.status)
 
       if (!response.ok) {
