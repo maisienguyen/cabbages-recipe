@@ -1,7 +1,6 @@
-
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { Heart, Bookmark } from 'lucide-react'
+import { Heart, Bookmark, Pencil, Trash2, X, Check } from 'lucide-react'
 import { useAuth } from '../context/authContext'
 import handleLike from '../utils/handleLike'
 import handleBookmark from '../utils/handleBookmark'
@@ -24,6 +23,8 @@ function RecipeDetail() {
   const [loadingComments, setLoadingComments] = useState(true)
   const [commentError, setCommentError] = useState('')
   const [postingComment, setPostingComment] = useState(false)
+  const [editingCommentId, setEditingCommentId] = useState(null)
+  const [editingCommentText, setEditingCommentText] = useState('')
 
   const [checkedIngredients, setCheckedIngredients] = useState([])
 
@@ -146,6 +147,75 @@ function RecipeDetail() {
       setPostingComment(false)
     }
   }
+
+  // Edit comment
+const handleEditComment = async (commentId) => {
+  if (!editingCommentText.trim()) return
+
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/comments/${commentId}`,
+      {
+        method: 'PUT',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          content: editingCommentText.trim(),
+        }),
+      }
+    )
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to update comment')
+    }
+
+    setComments(previous =>
+      previous.map(comment =>
+        comment._id === commentId ? data : comment
+      )
+    )
+
+    setEditingCommentId(null)
+    setEditingCommentText('')
+  } catch (error) {
+    setCommentError(error.message)
+  }
+}
+
+// Delete comment
+const handleDeleteComment = async (commentId) => {
+  const confirmed = window.confirm(
+    'Are you sure you want to delete this comment?'
+  )
+
+  if (!confirmed) return
+
+  try {
+    const response = await fetch(
+      `http://localhost:5000/api/comments/${commentId}`,
+      {
+        method: 'DELETE',
+        credentials: 'include',
+      }
+    )
+
+    const data = await response.json()
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to delete comment')
+    }
+
+    setComments(previous =>
+      previous.filter(comment => comment._id !== commentId)
+    )
+  } catch (error) {
+    setCommentError(error.message)
+  }
+}
 
   if (loading || authLoading) {
     return <p>Loading recipe...</p>
@@ -358,26 +428,92 @@ function RecipeDetail() {
         {/* Comment list */}
         {!loadingComments && comments.length > 0 && (
           <div className="comments-list">
-            {comments.map(comment => (
-              <article
-                className="comment-card"
-                key={comment._id}
+            {comments.map(comment => {
+  const isOwner =
+    user &&
+    String(comment.author?._id || comment.author) === String(user.id)
+
+  const isEditing = editingCommentId === comment._id
+
+  return (
+    <article className="comment-card" key={comment._id}>
+      <div className="comment-meta">
+        <strong>{comment.author?.username || 'Unknown'}</strong>
+
+        <div className="comment-meta-right">
+          <span>
+            {comment.createdAt
+              ? new Date(comment.createdAt).toLocaleDateString()
+              : ''}
+          </span>
+
+          {isOwner && !isEditing && (
+            <div className="comment-actions">
+              <button
+                type="button"
+                className="comment-icon-button"
+                title="Edit comment"
+                aria-label="Edit comment"
+                onClick={() => {
+                  setEditingCommentId(comment._id)
+                  setEditingCommentText(comment.content)
+                }}
               >
-                <div className="comment-meta">
-                  <strong>
-                    {comment.author?.username || 'Unknown'}
-                  </strong>
+                <Pencil size={15} />
+              </button>
 
-                  <span>
-                    {comment.createdAt
-                      ? new Date(comment.createdAt).toLocaleDateString()
-                      : ''}
-                  </span>
-                </div>
+              <button
+                type="button"
+                className="comment-icon-button"
+                title="Delete comment"
+                aria-label="Delete comment"
+                onClick={() => handleDeleteComment(comment._id)}
+              >
+                <Trash2 size={15} />
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
 
-                <p>{comment.content}</p>
-              </article>
-            ))}
+      {isEditing ? (
+        <div className="comment-edit-form">
+          <textarea
+            value={editingCommentText}
+            onChange={e => setEditingCommentText(e.target.value)}
+          />
+
+          <div className="comment-actions">
+            <button
+              type="button"
+              className="comment-icon-button"
+              title="Save changes"
+              aria-label="Save changes"
+              onClick={() => handleEditComment(comment._id)}
+            >
+              <Check size={16} />
+            </button>
+
+            <button
+              type="button"
+              className="comment-icon-button"
+              title="Cancel editing"
+              aria-label="Cancel editing"
+              onClick={() => {
+                setEditingCommentId(null)
+                setEditingCommentText('')
+              }}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p>{comment.content}</p>
+      )}
+    </article>
+  )
+})}
           </div>
         )}
 

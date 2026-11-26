@@ -54,6 +54,7 @@ const createComment = async (req, res) => {
       author: req.user._id,
       content: content.trim(),
     })
+ 
 
     // Notify recipe owner when someone else comments
     if (recipe.author.toString() !== req.user._id.toString()) {
@@ -77,8 +78,76 @@ const createComment = async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 }
+
+ // Update a comment
+const updateComment = async (req, res) => {
+  try {
+    const { content } = req.body
+
+    if (!content || !content.trim()) {
+      return res.status(400).json({
+        message: 'Comment cannot be empty',
+      })
+    }
+
+    const comment = await Comment.findById(req.params.commentId)
+
+    if (!comment) {
+      return res.status(404).json({
+        message: 'Comment not found',
+      })
+    }
+
+    if (comment.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: 'You can only edit your own comments',
+      })
+    }
+
+    comment.content = content.trim()
+    await comment.save()
+
+    const updatedComment = await comment.populate(
+      'author',
+      'username'
+    )
+
+    res.status(200).json(updatedComment)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
+// Delete a comment
+const deleteComment = async (req, res) => {
+  try {
+    const comment = await Comment.findById(req.params.commentId)
+
+    if (!comment) {
+      return res.status(404).json({
+        message: 'Comment not found',
+      })
+    }
+
+    if (comment.author.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: 'You can only delete your own comments',
+      })
+    }
+
+    await comment.deleteOne()
+
+    res.status(200).json({
+      message: 'Comment deleted successfully',
+    })
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
 module.exports = {
   getComments,
   getCommentCount,
   createComment,
+  updateComment,
+  deleteComment,
 }
