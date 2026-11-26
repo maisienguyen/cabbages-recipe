@@ -224,7 +224,7 @@ function Recipes() {
             <div>
         <p className="breadcrumb">DISCOVER / RECIPES</p>
 
-        <h1>Explore recipes</h1>
+        <h2>Explore recipes</h2>
 
         <p>
           Discover delicious recipes shared by our community.

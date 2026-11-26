@@ -111,8 +111,8 @@
   padding: 11px;
   border: none;
   border-radius: 8px;
-  background: #526b45;
-  color: white;
+  background: #a9bd72;
+  color:  #26351f;
   font-weight: 600;
 }
 
@@ -219,7 +219,7 @@
 }
 
 .recipes-grid .recipe-card-footer a {
-  color: #566b43;
+  color: #a9bd72;
   font-weight: 600;
 }
 

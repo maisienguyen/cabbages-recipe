@@ -7,10 +7,7 @@ const {
   getRecipeById,
   createRecipe,
   updateRecipe,
-<<<<<<< HEAD
   deleteRecipe,
-=======
->>>>>>> user-profile-feature
   toggleLike,
   toggleSave
 } = require('../controllers/recipeController')
@@ -25,14 +22,10 @@ router.get('/:id', getRecipeById)
 
 // Login required
 router.post('/', protect, upload.single('image'), createRecipe)
-<<<<<<< HEAD
 router.post('/', protect, upload.single('image'), createRecipe)
 router.put('/:id', protect, upload.single('image'), updateRecipe)
 router.delete('/:id', protect, deleteRecipe)
 
-=======
-router.put('/:id', protect, upload.single('image'), updateRecipe)
->>>>>>> user-profile-feature
 router.patch('/:id/like', protect, toggleLike)
 router.patch('/:id/save', protect, toggleSave)
 

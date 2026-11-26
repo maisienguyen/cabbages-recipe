@@ -1,56 +1,70 @@
+/*USER PROFILE PAGE*/
+
 .profile-page {
+  width: 91%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 32px;
+  padding: 40px 0;
+  box-sizing: border-box;
 }
+
+/*PROFILE HEADING*/
 
 .profile-heading {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
   margin-bottom: 28px;
 }
 
 .profile-heading h1 {
-  font-size: 30px;
-  color: #29352b;
   margin: 0;
+  color: #29352b;
+  font-size: 30px;
 }
 
 .publish-button {
-  display: inline-block;
-  padding: 12px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 40px;
+  padding: 0 18px;
+  border: 1px solid #a9bd72;
+  border-radius: 8px;
   background: #a9bd72;
   color: #26351f;
-  border-radius: 8px;
-  text-decoration: none;
+  font-size: 13px;
   font-weight: 600;
+  text-decoration: none;
+  transition: background 0.2s ease;
 }
 
 .publish-button:hover {
   background: #96ad60;
 }
 
-/* Profile information */
+/*PROFILE INFORMATION*/
 
 .profile-info {
   display: flex;
   align-items: center;
   gap: 24px;
   padding: 28px;
+  margin-bottom: 28px;
   background: #f7f6ef;
   border: 1px solid #e8e6dc;
   border-radius: 14px;
-  margin-bottom: 28px;
 }
 
 .profile-avatar {
-  width: 88px;
-  height: 88px;
-  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-shrink: 0;
+  width: 88px;
+  height: 88px;
+  overflow: hidden;
   border-radius: 50%;
   background: #dce6c7;
   color: #526b45;
@@ -58,42 +72,299 @@
   font-weight: 600;
 }
 
+.profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-details {
+  min-width: 0;
+}
+
 .profile-details h2 {
   margin: 0 0 6px;
+  color: #29352b;
   font-size: 24px;
 }
 
 .profile-details p {
+  margin: 0 0 12px;
   color: #777;
-  margin: 0 0 16px;
+  font-size: 14px;
 }
 
 .profile-stats {
   display: flex;
   flex-wrap: wrap;
   gap: 22px;
-  font-size: 13px;
+  margin-top: 12px;
   color: #526b45;
+  font-size: 13px;
 }
 
-/* Profile tabs */
+/*EDIT PROFILE BUTTON*/
+
+.edit-profile-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  margin-top: 2px;
+  padding: 0 18px;
+  border: 1px solid #a9bd72;
+  border-radius: 8px;
+  background: #a9bd72;
+  color: #26351f;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-profile-button:hover {
+  background: #96ad60;
+  border-color: #96ad60;
+  transform: translateY(-1px);
+}
+
+/*EDIT PROFILE FORM*/
+
+.edit-profile-form {
+  width: 100%;
+  max-width: 720px;
+  box-sizing: border-box;
+  margin: 0 0 30px;
+  padding: 28px;
+  background: #f7f6ef;
+  border: 1px solid #e8e6dc;
+  border-radius: 14px;
+}
+
+.edit-profile-form h2 {
+  margin: 0 0 24px;
+  color: #29352b;
+  font-size: 23px;
+}
+
+.edit-profile-form form {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Form sections */
+
+.edit-profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.edit-profile-section h3 {
+  margin: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e2e0d5;
+  color: #29352b;
+  font-size: 17px;
+}
+
+/* Individual fields */
+
+.edit-profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.edit-profile-field label,
+.edit-profile-form label {
+  display: block;
+  margin: 0;
+  color: #526641;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.edit-profile-field input,
+.edit-profile-form input:not([type="file"]) {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  box-sizing: border-box;
+  padding: 10px 13px;
+  border: 1px solid #deded5;
+  border-radius: 8px;
+  background: #fff;
+  color: #29352b;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.edit-profile-field input:focus,
+.edit-profile-form input:focus {
+  outline: none;
+  border-color: #a9bd72;
+  box-shadow: 0 0 0 3px rgba(169, 189, 114, 0.15);
+}
+
+/* Profile picture upload */
+
+.avatar-upload-area {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+}
+
+.avatar-upload-area label {
+  margin: 0;
+}
+
+.avatar-upload-area p,
+.edit-profile-hint {
+  margin: 0;
+  color: #777;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.avatar-upload-area input[type="file"] {
+  width: 100%;
+  color: #526641;
+  font-family: inherit;
+  font-size: 13px;
+}
+
+.avatar-upload-area input[type="file"]::file-selector-button {
+  padding: 9px 16px;
+  margin-right: 12px;
+  border: 1px solid #cbd6b2;
+  border-radius: 8px;
+  background: #e9eedc;
+  color: #526641;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.avatar-upload-area input[type="file"]::file-selector-button:hover {
+  background: #dce6c7;
+}
+
+/* Avatar preview */
+
+.avatar-preview {
+  width: 110px;
+  height: 110px;
+  margin: 4px 0;
+  overflow: hidden;
+  border: 3px solid #dce6c7;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.avatar-preview img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Form divider */
+
+.edit-profile-form hr {
+  width: 100%;
+  margin: 0;
+  border: none;
+  border-top: 1px solid #e2e0d5;
+}
+
+/* Save and Cancel buttons */
+
+.edit-profile-actions {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.edit-profile-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 125px;
+  min-height: 42px;
+  padding: 0 20px;
+  border: 1px solid #a9bd72;
+  border-radius: 8px;
+  background: #a9bd72;
+  color: #26351f;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.edit-profile-actions button:hover {
+  background: #96ad60;
+  border-color: #96ad60;
+}
+
+.edit-profile-actions button:last-child {
+  border-color: #cbd6b2;
+  background: #fff;
+  color: #526641;
+}
+
+.edit-profile-actions button:last-child:hover {
+  background: #e9eedc;
+}
+
+/* Profile message */
+
+.profile-message {
+  margin: 0 0 16px;
+  padding: 12px 16px;
+  border: 1px solid #dce6c7;
+  border-radius: 8px;
+  background: #eef5e7;
+  color: #526641;
+  font-size: 14px;
+}
+
+/*PROFILE TABS*/
 
 .profile-tabs {
   display: flex;
-  gap: 10px;
-  border-bottom: 1px solid #e5e2d8;
-  margin-bottom: 28px;
-  padding-bottom: 12px;
   flex-wrap: wrap;
+  gap: 10px;
+  padding-bottom: 12px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid #e5e2d8;
 }
 
 .profile-tabs button {
   padding: 10px 16px;
-  border: none;
+  border: 1px solid transparent;
   border-radius: 8px;
   background: transparent;
   color: #666;
+  font-family: inherit;
+  font-size: 13px;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .profile-tabs button:hover,
@@ -102,9 +373,7 @@
   color: #526b45;
 }
 
-/* =================================
-   RECIPE WORKSPACE
-================================= */
+/*RECIPE WORKSPACE*/
 
 .profile-content {
   width: 100%;
@@ -113,8 +382,8 @@
 .profile-workspace {
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
-  gap: 28px;
   align-items: start;
+  gap: 28px;
 }
 
 .profile-posts,
@@ -124,12 +393,12 @@
 
 .profile-posts > h2,
 .profile-editor > h2 {
-  font-size: 21px;
-  color: #29352b;
   margin: 0 0 20px;
+  color: #29352b;
+  font-size: 21px;
 }
 
-/* Recipe cards */
+/*RECIPE CARDS*/
 
 .profile-recipes-list {
   display: flex;
@@ -144,9 +413,9 @@
   gap: 16px;
   padding: 16px;
   overflow: hidden;
-  background: #fff;
   border: 1px solid #e8e6dc;
   border-radius: 12px;
+  background: #fff;
 }
 
 .profile-recipe-image {
@@ -154,8 +423,8 @@
   flex: 0 0 135px;
   width: 135px;
   height: 120px;
-  object-fit: cover;
   border-radius: 9px;
+  object-fit: cover;
 }
 
 .profile-recipe-info {
@@ -166,8 +435,8 @@
 
 .profile-recipe-info h3 {
   margin: 0 0 10px;
-  font-size: 20px;
   color: #29352b;
+  font-size: 20px;
 }
 
 .profile-recipe-info > p {
@@ -201,26 +470,24 @@
 .profile-recipe-comments {
   margin-top: 14px;
   padding: 12px;
-  background: #faf9f6;
   border-radius: 9px;
+  background: #faf9f6;
 }
 
-/* =================================
-   RECIPE EDITOR
-================================= */
+/*RECIPE EDITOR*/
 
 .profile-editor {
   min-width: 0;
   padding: 24px;
-  background: #f7f6ef;
   border: 1px solid #e8e5d8;
   border-radius: 14px;
+  background: #f7f6ef;
 }
 
 .profile-editor > h2 {
-  font-size: 22px;
   margin: 0 0 18px;
   color: #29352b;
+  font-size: 22px;
 }
 
 .profile-editor-actions {
@@ -243,10 +510,11 @@
 }
 
 .profile-editor .editor-tab.active {
-  background: #526b45;
-  border-color: #526b45;
-  color: white;
+  border-color: #a9bd72;
+  background: #a9bd72;
+  color: #26351f;
 }
+
 
 .profile-editor .existing-recipe-button {
   width: 100%;
@@ -254,7 +522,7 @@
   margin-bottom: 16px;
   border: 1px solid #deded5;
   border-radius: 8px;
-  background: white;
+  background: #fff;
   font-size: 13px;
 }
 
@@ -270,8 +538,8 @@
 .profile-editor .profile-editor-container {
   width: 100%;
   max-width: none;
-  margin: 0;
   padding: 0;
+  margin: 0;
 }
 
 .profile-editor .create-recipe-form {
@@ -318,16 +586,14 @@
   gap: 10px;
 }
 
-/* =================================
-   COOKING HIGHLIGHTS
-================================= */
+/*COOKING HIGHLIGHTS*/
 
 .cooking-highlights {
-  margin-top: 28px;
   padding: 22px;
-  background: #f7f6ef;
+  margin-top: 28px;
   border: 1px solid #e8e6dc;
   border-radius: 12px;
+  background: #f7f6ef;
 }
 
 .cooking-highlights > h3 {
@@ -347,9 +613,9 @@
   flex-direction: column;
   gap: 8px;
   padding: 16px 12px;
-  background: #efecd4;
   border: 1px solid #e4e3b7;
   border-radius: 9px;
+  background: #efecd4;
 }
 
 .highlight-stat strong {
@@ -363,8 +629,8 @@
 }
 
 .highlight-recipe {
-  margin-top: 22px;
   padding-top: 18px;
+  margin-top: 22px;
   border-top: 1px solid #e4e3d5;
 }
 
@@ -384,8 +650,8 @@
   width: 76px;
   height: 76px;
   flex-shrink: 0;
-  object-fit: cover;
   border-radius: 9px;
+  object-fit: cover;
 }
 
 .highlight-recipe-content strong {
@@ -399,24 +665,22 @@
   font-size: 12px;
 }
 
-/* =================================
-   MORE FROM YOUR KITCHEN
-================================= */
+/*MORE FROM YOUR KITCHEN*/
 
 .more-recipes-section {
   width: 100%;
   box-sizing: border-box;
-  margin-top: 32px;
   padding: 22px;
-  background: #fff;
+  margin-top: 32px;
   border: 1px solid #e8e6dc;
   border-radius: 12px;
+  background: #fff;
 }
 
 .more-recipes-heading h2 {
   margin: 0 0 6px;
-  font-size: 20px;
   color: #29352b;
+  font-size: 20px;
 }
 
 .more-recipes-heading p {
@@ -433,11 +697,11 @@
 
 .more-recipe-card {
   overflow: hidden;
-  color: inherit;
-  text-decoration: none;
   border: 1px solid #e8e6dc;
   border-radius: 10px;
   background: #fff;
+  color: inherit;
+  text-decoration: none;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -469,19 +733,17 @@
 
 .more-recipe-info h3 {
   margin: 0 0 6px;
-  font-size: 14px;
   color: #29352b;
+  font-size: 14px;
 }
 
 .more-recipe-info p {
   margin: 0;
-  font-size: 12px;
   color: #777;
+  font-size: 12px;
 }
 
-/* =================================
-   RESPONSIVE
-================================= */
+/*RESPONSIVE*/
 
 @media (max-width: 900px) {
   .profile-workspace {
@@ -495,21 +757,59 @@
 
 @media (max-width: 600px) {
   .profile-page {
-    padding: 24px 16px;
+    width: 92%;
+    padding: 24px 0;
+  }
+
+  .profile-heading {
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .profile-heading h1 {
+    font-size: 26px;
   }
 
   .profile-info {
     align-items: flex-start;
+    gap: 16px;
     padding: 20px;
+  }
+
+  .profile-avatar {
+    width: 68px;
+    height: 68px;
+    font-size: 25px;
+  }
+
+  .profile-details h2 {
+    font-size: 20px;
   }
 
   .profile-stats {
     gap: 10px;
   }
 
-  .profile-heading {
-    gap: 12px;
-    flex-wrap: wrap;
+  .edit-profile-form {
+    padding: 20px 16px;
+  }
+
+  .edit-profile-actions {
+    flex-direction: column;
+  }
+
+  .edit-profile-actions button {
+    width: 100%;
+  }
+
+  .profile-tabs {
+    gap: 6px;
+  }
+
+  .profile-tabs button {
+    padding: 9px 11px;
+    font-size: 12px;
   }
 
   .profile-recipe-card {
@@ -517,9 +817,9 @@
   }
 
   .profile-recipe-image {
+    flex: auto;
     width: 100%;
     height: 180px;
-    flex-basis: auto;
   }
 
   .more-recipes-grid {
@@ -545,4 +845,22 @@
   .highlight-stat span {
     font-size: 10px;
   }
+}
+.remove-avatar-button {
+  display: block;
+  margin-top: 10px;
+  padding: 8px 14px;
+  border: 1px solid #e3b5b5;
+  border-radius: 6px;
+  background: #fff1f1;
+  color: #b94a48;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.remove-avatar-button:hover {
+  background: #f8dddd;
+  border-color: #d99a9a;
 }

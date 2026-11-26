@@ -45,13 +45,8 @@ const getMyRecipes = async (req, res) => {
     })
   }
 }
-<<<<<<< HEAD
-
 // GET /api/recipes/:id
 // Get one recipe by ID
-=======
-// Get recipe by ID
->>>>>>> user-profile-feature
 const getRecipeById = async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id)
@@ -110,67 +105,6 @@ const createRecipe = async (req, res) => {
     })
   }
 }
-// Update an existing recipe
-const updateRecipe = async (req, res) => {
-  try {
-    const recipe = await Recipe.findById(req.params.id)
-
-    if (!recipe) {
-      return res.status(404).json({
-        message: 'Recipe not found',
-      })
-    }
-
-    if (recipe.author.toString() !== req.user._id.toString()) {
-      return res.status(403).json({
-        message: 'Not authorized to update this recipe',
-      })
-    }
-
-    const {
-      title,
-      description,
-      category,
-      ingredients,
-      instructions,
-      cookingTime,
-      servings,
-      image,
-      isDraft,
-    } = req.body
-
-    recipe.title = title
-    recipe.description = description
-    recipe.category = category
-    recipe.ingredients = ingredients
-    recipe.instructions = instructions
-    recipe.cookingTime = cookingTime
-    recipe.servings = servings
-
-    if (req.file) {
-      recipe.image = `/uploads/${req.file.filename}`
-    } else if (image !== undefined) {
-      recipe.image = image
-    }
-
-    if (isDraft !== undefined) {
-      recipe.isDraft = isDraft === 'true' || isDraft === true
-    }
-
-    await recipe.save()
-
-    res.status(200).json({
-      message: 'Recipe updated successfully',
-      recipe,
-    })
-  } catch (error) {
-    res.status(400).json({
-      message: 'Failed to update recipe',
-      error: error.message,
-    })
-  }
-}
-
 // Update an existing recipe
 const updateRecipe = async (req, res) => {
   try {
@@ -342,10 +276,7 @@ module.exports = {
   getRecipeById,
   createRecipe,
   updateRecipe,
-<<<<<<< HEAD
   deleteRecipe,
-=======
->>>>>>> user-profile-feature
   toggleLike,
   toggleSave,
 }
