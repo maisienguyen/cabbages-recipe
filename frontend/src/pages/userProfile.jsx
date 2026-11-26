@@ -2,7 +2,7 @@ import { useAuth } from '../context/authContext'
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import CreateRecipe from './createRecipe'
-import './UserProfile.css'
+import './userProfile.css'
 
 function UserProfile() {
   const { user, setUser } = useAuth()
