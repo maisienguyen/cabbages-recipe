@@ -47,7 +47,7 @@ useEffect(() => {
   const fetchRecipe = async () => {
     try {
       const response = await fetch(
-        `/api/recipes/${id}`,
+        `/api/recipes/edit/${id}`,
         { credentials: 'include' }
       )
 

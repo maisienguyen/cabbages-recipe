@@ -84,6 +84,32 @@ const getRecipeById = async (req, res) => {
   }
 }
 
+// Get one recipe for editing (including drafts)
+const getRecipeForEditing = async (req, res) => {
+  try {
+    const recipe = await Recipe.findById(req.params.id)
+      .populate('author', 'username')
+
+    if (!recipe) {
+      return res.status(404).json({
+        message: 'Recipe not found',
+      })
+    }
+
+    if (recipe.author._id.toString() !== req.user._id.toString()) {
+      return res.status(403).json({
+        message: 'Not authorized to edit this recipe',
+      })
+    }
+
+    res.status(200).json(recipe)
+  } catch (error) {
+    res.status(400).json({
+      message: 'Invalid recipe ID',
+    })
+  }
+}
+
 const createRecipe = async (req, res) => {
   try {
     const {
@@ -293,6 +319,7 @@ module.exports = {
   getMyRecipes,
   getSavedRecipes,
   getRecipeById,
+  getRecipeForEditing,
   createRecipe,
   updateRecipe,
   deleteRecipe,

@@ -6,6 +6,7 @@ const {
   getMyRecipes,
   getSavedRecipes,
   getRecipeById,
+  getRecipeForEditing,
   createRecipe,
   updateRecipe,
   deleteRecipe,
@@ -20,6 +21,7 @@ const upload = require('../middleware/uploadMiddleware')
 router.get('/', getRecipes)
 router.get('/my-recipes', protect, getMyRecipes)
 router.get('/saved', protect, getSavedRecipes)
+router.get('/edit/:id', protect, getRecipeForEditing)
 router.get('/:id', getRecipeById)
 
 // Login required
