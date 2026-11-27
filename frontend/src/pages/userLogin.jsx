@@ -26,11 +26,21 @@ function UserLogin() {
         body: JSON.stringify({ username, password }),
       })
 
-      const data = await response.json()
+      
+      const responseText = await response.text()
+
+      let data = {}
+
+      try {
+        data = responseText ? JSON.parse(responseText) : {}
+        } catch {
+        throw new Error('Server returned an invalid response. Please try again.')
+        }
 
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed')
+      throw new Error(data.message || 'Login failed')
       }
+
 
       await refreshUser()
         navigate('/')
