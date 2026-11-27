@@ -320,35 +320,66 @@ const handleDeleteComment = async (commentId) => {
   </p>
 </section>
 
-            <section className="instructions-section">
-              <h2>Instructions</h2>
+<section className="instructions-section">
+  <h2>Instructions</h2>
 
-              <ol>
-                {recipe.instructions?.map((instruction, index) => (
-                  <li key={index}>
-                    {String(instruction).replace(
-                      /^\s*(\d+[\.\)]\s*)+/,
-                      ''
-                    )}
-                  </li>
-                ))}
-              </ol>
-            </section>
+  <ol>
+  {recipe.instructions?.map((instruction, index) => (
+  <li key={index}>
+  {String(instruction).replace(
+  /^\s*(\d+[\.\)]\s*)+/,
+  ''
+)}
+  </li>
+))}
+  </ol>
+  </section>
 
-          </div>
-        </div>
+  </div>
+  </div>
 
-        {/* Sidebar */}
-        <aside className="detail-sidebar">
+{/* Sidebar */}
+  <aside className="detail-sidebar">
 
-          {/* Creator */}
-          <div className="creator-card">
-            <h2>About the creator</h2>
+{/* Creator */}
+  <div className="creator-card">
+    <h2>About the creator</h2>
 
-            <p>
-              {recipe.author?.username || 'Unknown'}
-            </p>
-          </div>
+    <div className="creator-info">
+    <div className="creator-avatar">
+      {recipe.author?.avatar ? (
+        <img src={recipe.author.avatar} alt="Creator avatar" />
+      ) : (
+        <span>
+          {(recipe.author?.displayName || recipe.author?.username || 'U')
+            .charAt(0)
+            .toUpperCase()}
+        </span>
+      )}
+    </div>
+
+    <div className="creator-details">
+      <h3>
+        {recipe.author?.displayName || recipe.author?.username || 'Unknown'}
+      </h3>
+      <p>@{recipe.author?.username || 'unknown'}</p>
+      <p>User ID: {recipe.author?._id}</p>
+    </div>
+  </div>
+
+  {recipe.author?.bio && (
+    <p className="creator-bio">{recipe.author.bio}</p>
+  )}
+
+  <div className="creator-dates">
+    <p>
+      Published: {new Date(recipe.createdAt).toLocaleDateString()}
+    </p>
+    <p>
+      Updated: {new Date(recipe.updatedAt).toLocaleDateString()}
+    </p>
+  </div>
+</div>
 
           {/* Like and Save */}
           <div className="engagement-card">

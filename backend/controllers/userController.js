@@ -154,6 +154,8 @@ const userProfile = async (req, res) => {
             username: user.username,
             email: user.email,
             avatar: user.avatar || "",
+            displayName: user.displayName || "",
+            bio: user.bio ||"",
         });
     } catch (error) {
         console.error("Profile error:", error);
@@ -174,7 +176,7 @@ const updateUserProfile = async (req, res) => {
             });
         }
 
-        const { username, email, avatar } = req.body;
+        const { username, email, avatar, displayName, bio } = req.body;
 
         if (username !== undefined) {
             if (!username.trim()) {
@@ -212,6 +214,13 @@ const updateUserProfile = async (req, res) => {
         if (avatar !== undefined) {
             user.avatar = avatar;
         }
+        if (displayName !== undefined) {
+            user.displayName = displayName.trim();
+        }
+
+        if (bio !== undefined) {
+            user.bio = bio.trim();
+        }
 
         await user.save();
 
@@ -221,6 +230,8 @@ const updateUserProfile = async (req, res) => {
             email: user.email,
             avatar: user.avatar,
             message: "Profile updated successfully",
+            displayName: user.displayName,
+            bio: user.bio,
         });
 
     } catch (error) {

@@ -20,10 +20,12 @@ function UserProfile() {
   const [expandedComments, setExpandedComments] = useState({})
   const [isEditingProfile, setIsEditingProfile] = useState(false)
   const [profileForm, setProfileForm] = useState({
-  username: user?.username || '',
-  email: user?.email || '',
-  avatar: user?.avatar || '',
-  })
+            username: user?.username || '',
+            email: user?.email || '',
+            avatar: user?.avatar || '',
+            displayName: user?.dislayName ||'',
+            bio: user?.bio ||'',
+        })
   const [selectedAvatarFile, setSelectedAvatarFile] = useState(null)
   const [avatarPreview, setAvatarPreview] = useState(user?.avatar || '')
   const [currentPassword, setCurrentPassword] = useState('')
@@ -76,6 +78,8 @@ const handleUpdateProfile = async (e) => {
           username: profileForm.username,
           email: profileForm.email,
           avatar: updatedAvatar,
+          displayName: profileForm.displayName,
+          bio: profileForm.bio,
         }),
       }
     )
@@ -120,6 +124,8 @@ const handleUpdateProfile = async (e) => {
       username: profileData.username,
       email: profileData.email,
       avatar: profileData.avatar || '',
+      displayName: profileData.displayName || '',
+      bio: profileData.bio || '',
     })
 
     setAvatarPreview(profileData.avatar || '')
@@ -414,6 +420,8 @@ useEffect(() => {
         <div className="profile-details">
         <h2>{user.username}</h2>
         <p>{user.email}</p>
+        {user.displayName && <p>{user.displayName}</p>}
+        {user.bio && <p className="profile-bio">{user.bio}</p>}
 
         <button
          type="button"
@@ -423,6 +431,8 @@ useEffect(() => {
          username: user.username || '',
          email: user.email || '',
          avatar: user.avatar || '',
+         displayName: user.displayName || '',
+         bio: user.bio || '',
          })
          setAvatarPreview(user.avatar || '')
          setSelectedAvatarFile(null)
@@ -519,46 +529,79 @@ useEffect(() => {
 
     <hr />
 
-    {/* Personal Information */}
-    <div className="edit-profile-section">
-      <h3>Personal Information</h3>
+{/* Personal Information */}
+<div className="edit-profile-section">
+    <h3>Personal Information</h3>
 
-      <div className="edit-profile-field">
-        <label htmlFor="profile-username">Username</label>
-        <input
-          id="profile-username"
-          type="text"
-          value={profileForm.username}
-          onChange={(e) =>
-            setProfileForm({
-              ...profileForm,
-              username: e.target.value,
+<div className="edit-profile-field">
+    <label htmlFor="profile-username">Username</label>
+    <input
+        id="profile-username"
+        type="text"
+        value={profileForm.username}
+        onChange={(e) =>
+        setProfileForm({
+            ...profileForm,
+            username: e.target.value,
             })
           }
-          required
+        required
         />
-      </div>
+</div>
 
-      <div className="edit-profile-field">
-        <label htmlFor="profile-email">Email address</label>
-        <input
-          id="profile-email"
-          type="email"
-          value={profileForm.email}
-          onChange={(e) =>
-            setProfileForm({
-              ...profileForm,
-              email: e.target.value,
-            })
-          }
-          required
+<div className="edit-profile-field">
+<label htmlFor="profile-email">Email address</label>
+    <input
+        id="profile-email"
+        type="email"
+        value={profileForm.email}
+        onChange={(e) =>
+         setProfileForm({
+         ...profileForm,
+         email: e.target.value,
+        })
+        }
+        required
         />
-      </div>
+</div>
+<div className="edit-profile-field">
+<label htmlFor="profile-display-name">Display Name</label>
+<input
+    id="profile-display-name"
+    type="text"
+    value={profileForm.displayName}
+    onChange={(e) =>
+      setProfileForm({
+        ...profileForm,
+        displayName: e.target.value,
+      })
+    }
+    placeholder="Enter your display name"
+  />
+</div>
+
+<div className="edit-profile-field">
+  <label htmlFor="profile-bio">Bio</label>
+  <textarea
+    id="profile-bio"
+    value={profileForm.bio}
+    onChange={(e) =>
+      setProfileForm({
+        ...profileForm,
+        bio: e.target.value,
+      })
+    }
+    placeholder="Tell us a little about yourself..."
+    rows={4}
+    maxLength={200}
+  />
+  <small>Maximum 200 characters.</small>
+</div>
     </div>
 
     <hr />
 
-    {/* Change Password */}
+{/* Change Password */}
     <div className="edit-profile-section">
       <h3>Change Password</h3>
       <p className="edit-profile-hint">

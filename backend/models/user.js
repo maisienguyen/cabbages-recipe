@@ -21,9 +21,19 @@ const userSchema = mongoose.Schema({
         type: String,
         default: "",
    },
+   displayName: {
+    type: String,
+    default: "",
+    trim: true,
+},
+   bio: {
+    type: String,
+    default: "",
+    trim: true,
+},
    createdAt: {
-       type: Date,
-       default: new Date(new Date().getTime()),
+    type: Date,
+    default: new Date(new Date().getTime()),
    },
 });
 

@@ -16,7 +16,7 @@ const getRecipes = async (req, res) => {
     }
 
     const recipes = await Recipe.find(filter)
-      .populate('author', 'username')
+      .populate('author', 'username displayName avatar bio')
       .sort({ createdAt: -1 })
 
     res.status(200).json(recipes)
@@ -34,7 +34,7 @@ const getMyRecipes = async (req, res) => {
     const recipes = await Recipe.find({
       author: req.user._id,
     })
-      .populate('author', 'username')
+      .populate('author', 'username displayName avatar bio')
       .sort({ createdAt: -1 })
 
     res.status(200).json(recipes)
@@ -68,7 +68,7 @@ const getSavedRecipes = async (req, res) => {
 const getRecipeById = async (req, res) => {
   try {
     const recipe = await Recipe.findById(req.params.id)
-      .populate('author', 'username')
+      .populate('author', 'username displayName avatar bio')
 
     if (!recipe || recipe.isDraft) {
       return res.status(404).json({
