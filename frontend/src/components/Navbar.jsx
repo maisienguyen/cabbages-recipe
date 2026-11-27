@@ -1,7 +1,7 @@
 import { Link, NavLink } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/authContext'
-import { UserRound, BookOpen, LogOut, Bell } from 'lucide-react'
+import { LogOut, Bell } from 'lucide-react'
 
 function Navbar() {
   const { user, logout } = useAuth()
@@ -154,24 +154,6 @@ function Navbar() {
 
             {isDropdownOpen && (
               <div className="dropdown-menu">
-                <Link
-                  to="/user"
-                  className="dropdown-item"
-                  onClick={() => setIsDropdownOpen(false)}
-                >
-                  <UserRound size={16} />
-                  My Profile
-                </Link>
-
-                <Link
-                  to="/my-recipes"
-                  className="dropdown-item"
-                  onClick={() => setIsDropdownOpen(false)}
-                >
-                  <BookOpen size={16} />
-                  My Recipes
-                </Link>
-
                 <button
                   type="button"
                   className="dropdown-item"
